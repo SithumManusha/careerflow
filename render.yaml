@@ -1,0 +1,51 @@
+# CareerFlow Enterprise - Render Infrastructure-as-Code Blueprint
+# Deploy all 3 microservices (Frontend, Backend, Worker) in 1-Click on Render Free Tier
+
+services:
+  # 1. Python FastAPI NLP Worker (Port 8000)
+  - type: web
+    name: careerflow-worker
+    runtime: python
+    rootDir: worker-python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8000
+
+  # 2. Java Spring Boot 3 Core Backend (Port 8080)
+  - type: web
+    name: careerflow-backend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    rootDir: backend-java
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: WORKER_PYTHON_URL
+        fromService:
+          type: web
+          name: careerflow-worker
+          property: host
+
+  # 3. Next.js 14 Frontend (Port 3000)
+  - type: web
+    name: careerflow-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_BACKEND_URL
+        fromService:
+          type: web
+          name: careerflow-backend
+          property: host
+      - key: NEXT_PUBLIC_WORKER_URL
+        fromService:
+          type: web
+          name: careerflow-worker
+          property: host

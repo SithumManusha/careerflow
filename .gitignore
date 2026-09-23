@@ -1,0 +1,39 @@
+# Node & Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+.env.local
+.env.*.local
+
+# Java Maven & IDEs
+target/
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+.pytest_cache/
+venv/
+env/
+
+# Playwright Tests
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+**/test-results/
+**/playwright-report/
+**/.last-run.json
+
+# System & Logs
+*.log
+.DS_Store
+Thumbs.db
