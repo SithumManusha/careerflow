@@ -89,17 +89,7 @@ Once started, open [http://localhost:3000](http://localhost:3000) in your browse
 
 ---
 
-### Option 2: 1-Click Windows Launcher
-
-If you are on Windows, you can run the interactive batch script:
-```cmd
-run_project.bat
-```
-- Select **`0`** to start all 3 microservices concurrently in separate native command windows and open the browser automatically.
-
----
-
-### Option 3: Run Services Individually
+### Option 2: Run Services Individually
 
 #### 1. Python NLP Worker (Port 8000)
 ```bash
