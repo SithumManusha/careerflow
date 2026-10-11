@@ -102,7 +102,7 @@ Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimizat
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // 1-Click Auto-Transfer Listener from ATS Scanner
+  // Direct ATS Transfer Listener from ATS Scanner
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -231,43 +231,6 @@ Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimizat
     setCertificationsText("");
     setActivitiesText("");
     showToast("All fields cleared.");
-  };
-
-  const handleLoadMasterProfile = () => {
-    setFullName("Sithum Manusha");
-    setTitle("Software Engineer | Distributed Systems & Cloud");
-    setLocation("Colombo, Sri Lanka");
-    setEmail("sithum.manusha@careerflow.dev");
-    setPhone("+94 77 123 4567");
-    setGithubUrl("github.com/SithumManusha");
-    setLinkedinUrl("linkedin.com/in/sithummanusha");
-    setPortfolioUrl("sithummanusha.dev");
-
-    setSummaryText("Results-driven Software Engineer with hands-on production expertise in Java 21, Spring Boot 3, and Next.js 14 microservices. Architected high-throughput retail POS engines with offline-first background synchronization and automated personal finance analytics platforms. Passionate about distributed systems resilience, clean architecture, and cloud scalability.");
-
-    setSkillsText(`Languages & Core: Java 21, TypeScript, Python 3.12, SQL, JavaScript (ES6+)
-Frameworks & Libraries: Spring Boot 3, Spring Data JPA, Next.js 14, React 18, FastAPI, Tailwind CSS, Prisma ORM
-Databases & Caching: PostgreSQL (ACID), Redis (Token-Bucket Limiter), IndexedDB (PWA)
-DevOps & Cloud: Docker, Kubernetes, Git, GitHub Actions CI/CD, Render, Vercel
-Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimization, JUnit 5, Playwright E2E`);
-
-    setExperienceText(`Software Engineer Intern | CareerFlow & Enterprise Systems | 2025 – Present
-• Architected multi-branch retail POS & ERP platform handling high transaction concurrency with offline-first IndexedDB background sync, preventing transaction loss during network blackouts.
-• Engineered 12+ RESTful microservices in Spring Boot 3 and Java 21, reducing database query p95 latency by 42% through Redis caching and PostgreSQL indexing.
-• Built full-stack personal finance workspace featuring automated 11-category budgeting and real-time multi-currency conversions.
-• Developed automated ATS resume optimizer platform achieving 94% callback benchmarks using TF-IDF vectorization and cosine similarity matching.`);
-
-    setEducationText(`BSc (Hons) in Software Engineering | Sri Lanka Technological Campus (SLTC) | 2022 – 2026
-• Relevant Coursework: Data Structures & Algorithms, Distributed Systems, Database Management Systems, Advanced Web Development, Software Quality Assurance`);
-
-    setCertificationsText(`• Meta Certified Back-End Developer Specialization
-• Oracle Certified Foundations Associate (Java)
-• Postman API Fundamentals Student Expert`);
-
-    setActivitiesText(`• IEEE Computer Society Member | Active open-source contributor and technical mentor.
-• Hackathon Finalist: Developed real-time collaborative expense settlement engine.`);
-
-    showToast("Restored Master Software Engineer Profile (Sithum Manusha)!");
   };
 
   // Section Reordering Helper
@@ -552,7 +515,7 @@ Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimizat
         onChange={handleLoadJson}
       />
 
-      {/* 1-Click Import Notification Banner from ATS Scanner */}
+      {/* Direct ATS Transfer Notification Banner from ATS Scanner */}
       {importedAlert && (
         <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-indigo-900 text-white shadow-md print:hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
           <div className="flex items-center gap-3">
@@ -597,14 +560,6 @@ Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimizat
 
         {/* Global Action Bar */}
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={handleLoadMasterProfile}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-sm shadow-blue-500/20"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>⚡ 1-Click Load Master CV</span>
-          </button>
-
           <button
             onClick={handleSaveToCloud}
             title={user ? "Save draft directly to your CareerFlow account" : "Sign in to save draft to cloud"}

@@ -48,7 +48,7 @@ async function sleep(ms) {
     record('Landing Page', 'Hero CTA: Create 1-Page ATS CV', Boolean(heroCvBtn));
     record('Landing Page', 'Hero CTA: AI Mock Interview', Boolean(heroInterviewBtn));
 
-    // 1.4 Auth Modal & 1-Click Demo Login
+    // 1.4 Auth Modal & Candidate Login
     const signInBtn = await page.$('header button:has-text("Sign In")');
     if (signInBtn) {
       await signInBtn.click();
@@ -56,6 +56,13 @@ async function sleep(ms) {
 
       const modalTitle = await page.$('h2:has-text("CareerFlow Account")');
       record('Auth System', 'Sign In Modal Opens on Click', Boolean(modalTitle));
+
+      const emailInput = await page.$('input[type="email"]');
+      const passInput = await page.$('input[type="password"]');
+      if (emailInput && passInput) {
+        await emailInput.fill('sithum.manusha@careerflow.dev');
+        await passInput.fill('demo1234');
+      }
 
       const submitBtn = await page.$('button:has-text("Sign In to Account")');
       record('Auth System', 'Sign In to Account Button Present', Boolean(submitBtn));
@@ -81,18 +88,13 @@ async function sleep(ms) {
 
     // 1.5 Google XYZ Bullet Optimizer
     console.log('\n--- Testing Google XYZ Bullet Optimizer ---');
-    const chipSpring = await page.$('button:has-text("Spring Microservices")');
-    const chipReact = await page.$('button:has-text("React & Redis")');
-    const chipPwa = await page.$('button:has-text("PWA Offline")');
-    record('XYZ Optimizer', 'Preset Chip 1 (Spring Microservices)', Boolean(chipSpring));
-    record('XYZ Optimizer', 'Preset Chip 2 (React & Redis)', Boolean(chipReact));
-    record('XYZ Optimizer', 'Preset Chip 3 (PWA Offline)', Boolean(chipPwa));
-
-    if (chipSpring) {
-      await chipSpring.click();
-      await sleep(300);
-      const textVal = await page.$eval('textarea', el => el.value);
-      record('XYZ Optimizer', 'Chip Click Injects Pre-fill Bullet', textVal.includes('Spring Boot'));
+    const bulletArea = await page.$('textarea[placeholder*="Developed API"]');
+    if (bulletArea) {
+      await bulletArea.fill('Developed high-throughput API microservices with Spring Boot 3 and Redis.');
+    }
+    const skillInput = await page.$('input[placeholder*="Java 21"]');
+    if (skillInput) {
+      await skillInput.fill('Spring Boot 3');
     }
 
     const genBtn = await page.$('button:has-text("Generate Google XYZ Bullet")');
@@ -119,26 +121,23 @@ async function sleep(ms) {
     await page.goto(`${baseUrl}/ats-checker`, { waitUntil: 'networkidle' });
 
     // 2.1 Action Toolbar
-    const sampleDataBtn = await page.$('button:has-text("1-Click Load Full Data")');
     const clearBtn = await page.$('button:has-text("Clear Fields")');
-    record('ATS Scanner', '1-Click Load Full Data Button Present', Boolean(sampleDataBtn));
     record('ATS Scanner', 'Clear Fields Button Present', Boolean(clearBtn));
 
-    // 2.2 Test 1-Click Load Full Data
-    if (sampleDataBtn) {
-      await sampleDataBtn.click();
-      await sleep(800);
+    // 2.2 Realistic Data Entry
+    const nameInput = await page.$('input[placeholder*="Your Full Name"]');
+    if (nameInput) await nameInput.fill('Sithum Manusha');
+    const roleInput = await page.$('input[placeholder*="Target Job Title"]');
+    if (roleInput) await roleInput.fill('Backend Software Engineer (Java / Cloud)');
 
-      const nameVal = await page.$eval('input[placeholder*="Full Name"]', el => el.value);
-      const roleVal = await page.$eval('input[placeholder*="Target Role"]', el => el.value);
-      const cvVal = await page.$$eval('textarea', els => els[0]?.value || '');
-      const jdVal = await page.$$eval('textarea', els => els[1]?.value || '');
-
-      record('ATS Scanner', 'Full Data Load: Candidate Name', nameVal === 'Sithum Manusha');
-      record('ATS Scanner', 'Full Data Load: Target Role', roleVal.includes('Backend Software Engineer'));
-      record('ATS Scanner', 'Full Data Load: Technical Resume Text', cvVal.length > 200, `${cvVal.length} chars`);
-      record('ATS Scanner', 'Full Data Load: Job Description Text', jdVal.length > 100, `${jdVal.length} chars`);
+    const resumeArea = await page.$('textarea[placeholder*="Paste your plain-text"]');
+    if (resumeArea) {
+      await resumeArea.fill('Sithum Manusha | Software Engineer\nSpring Boot 3, Java 21, PostgreSQL, Redis microservices.');
     }
+    const jdSelect = await page.$('select');
+    if (jdSelect) await jdSelect.selectOption({ index: 0 });
+
+    record('ATS Scanner', 'Candidate Name & Resume Text Input', Boolean(nameInput && resumeArea));
 
     // 2.3 Run ATS Scan
     const runScanBtn = await page.$('button:has-text("Run ATS Compatibility Scan")');
@@ -156,13 +155,9 @@ async function sleep(ms) {
       const kwChips = await page.$$('span:has-text("Java"), span:has-text("Spring"), span:has-text("PostgreSQL")');
       record('ATS Scanner', 'Scan Results: Matched Keywords Displayed', kwChips.length > 0, `${kwChips.length} keywords`);
 
-      // Verify Pre-Flight Checklist
-      const checklistItems = await page.$$('.space-y-3 > div, div:has-text("ATS Parse Checklist")');
-      record('ATS Scanner', 'Scan Results: ATS Parse Checklist Rendered', checklistItems.length > 0);
-
-      // Verify Transfer to CV Builder CTA
-      const transferBtn = await page.$('button:has-text("Transfer into 1-Page CV Builder"), button:has-text("Transfer")');
-      record('ATS Scanner', 'Transfer to CV Builder Button Present', Boolean(transferBtn));
+      // Verify Direct Transfer Bridge CTA
+      const transferBtn = await page.$('button:has-text("Transfer to 1-Page CV Builder"), button:has-text("Transfer")');
+      record('ATS Scanner', 'Direct ATS Bridge Button Present', Boolean(transferBtn));
     }
 
     // ==============================================================
@@ -172,37 +167,26 @@ async function sleep(ms) {
     await page.goto(`${baseUrl}/cv-builder`, { waitUntil: 'networkidle' });
 
     // 3.1 Global Action Buttons
-    const masterCvBtn = await page.$('button:has-text("1-Click Load Master CV")');
     const saveCloudBtn = await page.$('button:has-text("Save to Cloud")');
     const saveJsonBtn = await page.$('button:has-text("Save JSON")');
     const copyPlainBtn = await page.$('button:has-text("Copy ATS Text")');
     const instantAuditBtn = await page.$('button:has-text("Instant ATS Audit")');
     const clearCvBtn = await page.$('button:has-text("Clear")');
 
-    record('CV Builder', '1-Click Load Master CV Button Present', Boolean(masterCvBtn));
     record('CV Builder', 'Save to Cloud Button Present', Boolean(saveCloudBtn));
     record('CV Builder', 'Save JSON Button Present', Boolean(saveJsonBtn));
     record('CV Builder', 'Copy ATS Text Button Present', Boolean(copyPlainBtn));
     record('CV Builder', 'Instant ATS Audit Button Present', Boolean(instantAuditBtn));
     record('CV Builder', 'Clear Button Present', Boolean(clearCvBtn));
 
-    // 3.2 Test 1-Click Load Master CV
-    if (masterCvBtn) {
-      await masterCvBtn.click();
-      await sleep(800);
-
-      const fullName = await page.$eval('input[placeholder*="Jane Developer"], input[placeholder*="Full Name"], input[value*="Sithum"]', el => el.value).catch(() => '');
-      record('CV Builder', 'Master CV Load: Full Name Verified', fullName === 'Sithum Manusha');
-    }
-
-    // 3.3 Verify Pre-Flight Checks & A4 Page Budget Gauge
+    // 3.2 Verify Pre-Flight Checks & A4 Page Budget Gauge
     const preflightCards = await page.$$('div:has-text("Contact Information"), div:has-text("Single-Column"), div:has-text("1-Page A4")');
     record('CV Builder', '6 Pre-Flight ATS Verification Checks Visible', preflightCards.length > 0);
 
     const budgetIndicator = await page.$('div:has-text("Optimal 1-Page A4 Fit"), div:has-text("A4 Capacity")');
     record('CV Builder', 'Live A4 Page Capacity Gauge Active', Boolean(budgetIndicator));
 
-    // 3.4 Test Save to Cloud
+    // 3.3 Test Save to Cloud
     if (saveCloudBtn) {
       await saveCloudBtn.click();
       await sleep(800);
@@ -227,16 +211,10 @@ async function sleep(ms) {
       const stepperBtns = await page.$$('button:has-text("1"), button:has-text("2"), button:has-text("3")');
       record('AI Interview', '5-Round Question Stepper Rendered', stepperBtns.length >= 3);
 
-      // Verify Senior Answer Button
-      const seniorAnsBtn = await page.$('button:has-text("1-Click Load Senior Answer")');
-      record('AI Interview', '1-Click Load Senior Answer Button Present', Boolean(seniorAnsBtn));
-
-      if (seniorAnsBtn) {
-        await seniorAnsBtn.click();
-        await sleep(500);
-
-        const answerText = await page.$eval('textarea', el => el.value);
-        record('AI Interview', 'Senior Answer Pre-filled (Redis & Microservices)', answerText.includes('microservices') || answerText.includes('Redis'));
+      // Verify Answer Input
+      const answerArea = await page.$('textarea[placeholder*="Type your response here"]');
+      if (answerArea) {
+        await answerArea.fill('In a production microservices architecture, I prioritize atomic operations, distributed Redis token-bucket rate limiting, and Resilience4j circuit breakers.');
       }
 
       // Verify Evaluate Answer Button

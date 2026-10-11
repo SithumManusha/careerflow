@@ -42,43 +42,8 @@ public class AuthService {
         if (!userAccountRepository.existsByEmail("demo@careerflow.dev")) {
             String salt = generateSalt();
             String hash = hashPassword("demo123", salt);
-            UserAccount demoUser = new UserAccount("demo@careerflow.dev", hash, salt, "Sithum Manusha (Associate Software Engineer)");
-            demoUser = userAccountRepository.save(demoUser);
-
-            // Pre-seed 3 scan history records
-            scanRecordRepository.save(new UserScanRecord(
-                    demoUser.getId(),
-                    "Lead Backend Engineer",
-                    "Backend Engineer (Java / Cloud)",
-                    88,
-                    94,
-                    "[\"gRPC\", \"Kubernetes\", \"OAuth2\"]"
-            ));
-            scanRecordRepository.save(new UserScanRecord(
-                    demoUser.getId(),
-                    "Full-Stack Cloud Developer",
-                    "Full-Stack Developer (React / Java)",
-                    76,
-                    90,
-                    "[\"Tailwind CSS\", \"Redis\", \"Docker\"]"
-            ));
-            scanRecordRepository.save(new UserScanRecord(
-                    demoUser.getId(),
-                    "Java Microservices Associate",
-                    "Backend Engineer (Java / Cloud)",
-                    92,
-                    96,
-                    "[\"GraphQL\", \"Kafka\"]"
-            ));
-
-            // Pre-seed sample CV draft
-            String sampleDraftJson = "{\"fullName\":\"Demo Software Engineer\",\"email\":\"demo@careerflow.dev\",\"title\":\"Backend & Distributed Systems Engineer\",\"skills\":\"Java 21, Spring Boot 3, Next.js 14, Python, Redis, PostgreSQL, Docker, Kubernetes\"}";
-            cvDraftRepository.save(new UserCVDraft(
-                    demoUser.getId(),
-                    "Backend Cloud Standard 2026",
-                    "Backend Engineer (Java / Cloud)",
-                    sampleDraftJson
-            ));
+            UserAccount demoUser = new UserAccount("demo@careerflow.dev", hash, salt, "Sithum Manusha");
+            userAccountRepository.save(demoUser);
         }
     }
 

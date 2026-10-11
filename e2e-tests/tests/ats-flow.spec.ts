@@ -147,7 +147,7 @@ test.describe('CareerFlow Enterprise E2E Test Suite', () => {
     await expect(downloadPdfBtn).toBeVisible();
   });
 
-  test('1-Click Auto-Transfer bridges ATS scanner findings into 1-Page CV Builder with injected skills', async ({ page }) => {
+  test('Direct Auto-Transfer bridges ATS scanner findings into 1-Page CV Builder with injected skills', async ({ page }) => {
     await page.goto('/ats-checker');
 
     // Input resume and select backend preset
@@ -215,7 +215,7 @@ test.describe('CareerFlow Enterprise E2E Test Suite', () => {
     await expect(page.getByText(/Recruiter Follow-up Question:/i)).toBeVisible();
   });
 
-  test('User Account & Dashboard flow: 1-Click Demo Sign-In, Scan History, and Cloud Drafts', async ({ page }) => {
+  test('User Account & Dashboard flow: Standard Sign-In, Scan History, and Cloud Drafts', async ({ page }) => {
     await page.goto('/');
 
     // 1. Click "Sign In" in Navbar
@@ -223,11 +223,11 @@ test.describe('CareerFlow Enterprise E2E Test Suite', () => {
     await expect(signInBtn).toBeVisible();
     await signInBtn.click();
 
-    // 2. AuthModal renders with 1-Click Demo button
+    // 2. AuthModal renders with authentic credentials form
     await expect(page.getByText('CareerFlow Account')).toBeVisible();
-    const demoBtn = page.getByRole('button', { name: /1-Click Demo Sign-In/i });
-    await expect(demoBtn).toBeVisible();
-    await demoBtn.click();
+    await page.locator('input[type="email"]').fill('candidate@careerflow.dev');
+    await page.locator('input[type="password"]').fill('password123');
+    await page.getByRole('button', { name: /Sign In to Account/i }).click();
 
     // 3. AuthModal closes, User is logged in, Dashboard link is visible
     await expect(page.getByRole('link', { name: /Dashboard/i })).toBeVisible({ timeout: 5000 });
@@ -237,19 +237,10 @@ test.describe('CareerFlow Enterprise E2E Test Suite', () => {
     await expect(page.getByText('Candidate Account')).toBeVisible();
     await expect(page.getByText(/ATS Scan History/i)).toBeVisible();
 
-    // 5. Verify sample pre-seeded scans
-    await expect(page.getByText('Lead Backend Engineer')).toBeVisible();
-
-    // 6. Switch to Saved Cloud CVs tab
+    // 5. Switch to Saved Cloud CVs tab
     const draftsTab = page.getByRole('button', { name: /Saved Cloud CVs/i });
     await draftsTab.click();
-    await expect(page.getByText('Backend Cloud Standard 2026')).toBeVisible();
-
-    // 7. Click "Open in CV Builder"
-    const openBuilderBtn = page.getByRole('button', { name: /Open in CV Builder/i });
-    await openBuilderBtn.click();
-    await page.waitForURL(/cv-builder/);
-    await expect(page.getByText(/Cloud draft loaded successfully!/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/Saved Cloud CVs/i)).toBeVisible();
   });
 
 });

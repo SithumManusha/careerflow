@@ -3,8 +3,7 @@
 A full-stack ATS resume optimization and technical interview preparation platform built with **Next.js 14**, **Java 21 Spring Boot 3**, and **Python 3.12 FastAPI**.
 
 > 🌐 **Live Web Application:** [https://careerflow-app.onrender.com](https://careerflow-app.onrender.com)  
-> 📖 **Interactive API Docs (Swagger):** [https://careerflow-backend-narz.onrender.com/swagger-ui/index.html](https://careerflow-backend-narz.onrender.com/swagger-ui/index.html)  
-> ⚡ **Quick Evaluation:** 1-Click Demo Login (`demo@careerflow.dev` / `demo123`)
+> 📖 **Interactive API Docs (Swagger):** [https://careerflow-backend-narz.onrender.com/swagger-ui/index.html](https://careerflow-backend-narz.onrender.com/swagger-ui/index.html)
 
 ---
 
@@ -48,7 +47,7 @@ flowchart LR
   - Dual scoring: **Job Match %** and **ATS Format Health**.
   - Categorized missing skill chips (Languages, Frameworks, Databases, DevOps, Architecture).
   - Action verb audit and keyword frequency analysis.
-  - 1-Click transfer to pre-populate the CV Builder with missing keywords.
+  - Direct bridge to transfer scan findings and inject missing keywords into the CV Builder.
 
 - **1-Page Smart CV Builder (`/cv-builder`):**
   - Built-in ATS pre-flight checklist (page budget, contact completeness, single-column Taleo safety).
@@ -63,7 +62,7 @@ flowchart LR
 - **Candidate Dashboard (`/dashboard`):**
   - View historical ATS scan records and match score progress.
   - Save, reload, and manage multiple cloud CV drafts.
-  - 1-Click demo login (`demo@careerflow.dev` / `demo123`) for quick evaluation without sign-up.
+  - Secure account authentication with real-time scan history and cloud drafts.
 
 ---
 

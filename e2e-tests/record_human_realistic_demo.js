@@ -53,6 +53,8 @@ async function humanClickElement(page, selector, steps = 14) {
       console.warn('Element not found:', selector);
       return false;
     }
+    await el.scrollIntoViewIfNeeded().catch(() => {});
+    await sleep(60);
     const box = await el.boundingBox();
     if (!box) {
       await el.click({ timeout: 1000, force: true }).catch(() => {});
@@ -238,14 +240,13 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   if (signInBtn) {
     await humanClickElement(page, 'header button:has-text("Sign In")', 8);
     await page.waitForSelector('button:has-text("Sign In to Account")', { timeout: 3000 }).catch(() => {});
-    await sleep(150);
+    await sleep(200);
 
-    // Modal appears immediately, user clicks "Sign In to Account"
-    const submitBtn = await page.$('button:has-text("Sign In to Account")');
-    if (submitBtn) {
-      await humanClickElement(page, 'button:has-text("Sign In to Account")', 8);
-      await sleep(250);
-    }
+    // Realistic human credential entry
+    await humanType(page, 'input[type="email"]', 'sithum.manusha@careerflow.dev');
+    await humanType(page, 'input[type="password"]', 'demo1234');
+    await humanClickElement(page, 'button:has-text("Sign In to Account")', 8);
+    await sleep(350);
   }
 
   // Active user avatar badge ("Sithum Manusha") appears
@@ -317,13 +318,43 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   await page.goto(`${baseUrl}/ats-checker`, { waitUntil: 'networkidle' });
   await sleep(600);
 
-  // Candidate types their full name with authentic human cadence
-  await humanType(page, 'input[placeholder*="Your Full Name"]', 'Sithum Manusha');
-  await sleep(250);
+  // Candidate enters their information authentically
+  await humanType(page, 'input[placeholder*="Full Name"]', 'Sithum Manusha');
+  await sleep(200);
 
-  // Human clicks "⚡ 1-Click Load Full Data"
-  await humanClickElement(page, 'button:has-text("1-Click Load Full Data")', 14);
-  await sleep(600);
+  await humanType(page, 'input[placeholder*="Target Role"]', 'Backend Software Engineer (Java / Cloud)');
+  await sleep(200);
+
+  // Authentic human resume entry
+  const candidateResume = `Sithum Manusha | Software Engineer
+sithum.manusha@careerflow.dev | linkedin.com/in/sithummanusha | github.com/SithumManusha
+
+PROFESSIONAL SUMMARY:
+Results-driven Software Engineer with hands-on expertise building enterprise microservices in Java 21, Spring Boot 3, and Next.js 14. Architected high-throughput retail platforms with offline-first background synchronization and automated personal finance platforms.
+
+TECHNICAL SKILLS:
+- Languages: Java 21, TypeScript, Python 3.12, SQL, JavaScript (ES6+)
+- Frameworks & Backend: Spring Boot 3, Spring Data JPA, Next.js 14, React 18, FastAPI, Tailwind CSS
+- Cloud & Databases: PostgreSQL (ACID), Redis (Token-Bucket Limiter), Docker, Kubernetes, Git, CI/CD Actions
+- Core: Distributed Microservices, RESTful APIs, Google XYZ Bullet Optimization, JUnit 5, Playwright E2E
+
+EXPERIENCE:
+Software Engineer Intern | CareerFlow Systems | 2025 – Present
+• Architected enterprise retail POS platform with offline-first IndexedDB background sync.
+• Engineered 12+ RESTful microservices in Spring Boot 3 and Java 21, reducing p95 latency by 42% via Redis caching.
+• Built full-stack personal finance workspace featuring automated budgeting and real-time conversions.
+• Developed automated ATS resume analyzer platform achieving 94% callback benchmarks using TF-IDF vectorization.`;
+
+  await humanClickElement(page, 'textarea[placeholder*="Paste your CV"]', 8);
+  await page.fill('textarea[placeholder*="Paste your CV"]', candidateResume);
+  await sleep(350);
+
+  // Select target job description preset
+  const jdBtn = await page.$('button:has-text("Java Backend"), button:has-text("Full-Stack")');
+  if (jdBtn) {
+    await humanClickElement(page, 'button:has-text("Java Backend"), button:has-text("Full-Stack")', 10);
+    await sleep(300);
+  }
 
   // In 1080p, both columns (Candidate Resume & Target JD) are visible side-by-side!
   await humanMoveTo(page, 480, 520, 10);
@@ -370,30 +401,28 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
     await sleep(350);
   }
 
+  // Human transfers findings to 1-Page CV Builder via Direct ATS Bridge
+  await humanSmoothScroll(page, 1350, 12);
+  await sleep(350);
+
+  const transferBtn = await page.$('button:has-text("Transfer to 1-Page CV Builder")');
+  if (transferBtn) {
+    await humanClickElement(page, 'button:has-text("Transfer to 1-Page CV Builder")', 12);
+    await page.waitForURL(/.*cv-builder/, { timeout: 6000 }).catch(async () => {
+      await page.goto(`${baseUrl}/cv-builder?fromScan=1`, { waitUntil: 'networkidle' });
+    });
+    await sleep(800);
+  } else {
+    await page.goto(`${baseUrl}/cv-builder?fromScan=1`, { waitUntil: 'networkidle' });
+  }
+
   // ==============================================================
   // SCENE 4: 1-Page Smart ATS CV Builder (Left Editor + Right Live A4 Preview)
   // ==============================================================
   console.log('--- SCENE 4: 1-Page Smart ATS CV Builder ---');
-  await humanSmoothScroll(page, 0, 12);
-  await sleep(250);
-
-  // Move cursor to header link and click
-  const navCv = await page.$('header a:has-text("1-Page ATS CV Builder")');
-  if (navCv) {
-    const box = await navCv.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
-      await page.evaluate(() => { if (window.__triggerCursorClick) window.__triggerCursorClick(); });
-    }
-  }
-  await page.goto(`${baseUrl}/cv-builder`, { waitUntil: 'networkidle' });
   await sleep(600);
 
-  // Human clicks "⚡ 1-Click Load Master CV"
-  await humanClickElement(page, 'button:has-text("1-Click Load Master CV")', 14);
-  await sleep(700);
-
-  // Human tests live styling controls: Changes accent theme to Navy
+  // Human tests live styling controls: Changes accent theme to Navy/Indigo
   const navyBtn = await page.$('button[title="Navy"], button[title="Indigo"]');
   if (navyBtn) {
     await humanClickElement(page, 'button[title="Navy"], button[title="Indigo"]', 10);
@@ -426,9 +455,13 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
     }
   }
 
+  // Scroll back to top action bar
+  await humanSmoothScroll(page, 0, 10);
+  await sleep(350);
+
   // Human clicks "Save to Cloud"
   await humanClickElement(page, 'button:has-text("Save to Cloud")', 12);
-  await sleep(500);
+  await sleep(800);
 
   // ==============================================================
   // SCENE 5: AI Mock Interview Studio
@@ -464,9 +497,12 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   await humanSmoothScroll(page, 320, 12);
   await sleep(400);
 
-  // Human clicks "⚡ 1-Click Load Senior Answer"
-  await humanClickElement(page, 'button:has-text("1-Click Load Senior Answer")', 14);
-  await sleep(600);
+  // Human realistically types technical answer into Studio response textarea
+  const answerSelector = 'textarea[placeholder*="Type your response here"]';
+  await humanClickElement(page, answerSelector, 10);
+  const technicalAnswer = 'In a production microservices architecture, I prioritize atomic operations, distributed Redis token-bucket rate limiting, and Resilience4j circuit breakers to prevent cascading failures. Database queries are indexed on PostgreSQL with connection pooling (HikariCP), transactions maintain strict ACID guarantees, and background reconciliation handles eventual consistency.';
+  await page.fill(answerSelector, technicalAnswer);
+  await sleep(450);
 
   // Human moves to submit button and clicks "Evaluate Answer"
   await humanClickElement(page, 'button:has-text("Evaluate Answer")', 14);
@@ -505,25 +541,15 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   await page.goto(`${baseUrl}/dashboard`, { waitUntil: 'networkidle' });
   await sleep(600);
 
-  // In 1080p, all 3 metric cards are clearly visible in a single row
-  const statCards = await page.$$('.grid.grid-cols-1.md\\:grid-cols-3 > div, .grid > div');
-  for (const card of statCards.slice(0, 3)) {
-    const box = await card.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 10);
-      await sleep(200);
-    }
-  }
-
-  // Human scrolls down to view Enterprise Scan History
-  await humanSmoothScroll(page, 380, 12);
+  // In 1080p, scan records saved in this session are shown
+  await humanSmoothScroll(page, 300, 12);
   await sleep(500);
 
   // Human clicks "Saved Cloud CVs" tab
   await humanClickElement(page, 'button:has-text("Saved Cloud CVs")', 12);
   await sleep(600);
 
-  // Human hovers over saved CV drafts
+  // Human hovers over real saved CV draft
   const draftCards = await page.$$('.grid > div');
   for (const draft of draftCards.slice(0, 2)) {
     const box = await draft.boundingBox();

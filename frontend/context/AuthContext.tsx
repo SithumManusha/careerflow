@@ -12,7 +12,6 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   register: (email: string, pass: string, name: string) => Promise<{ success: boolean; error?: string }>;
-  demoLogin: () => Promise<void>;
   logout: () => void;
 }
 
@@ -82,10 +81,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const demoLogin = async () => {
-    await login("demo@careerflow.dev", "demo123");
-  };
-
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -104,7 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         closeAuthModal: () => setIsAuthModalOpen(false),
         login,
         register,
-        demoLogin,
         logout,
       }}
     >

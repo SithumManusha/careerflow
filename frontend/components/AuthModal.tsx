@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { X, Lock, Mail, User, Sparkles, AlertCircle, CheckCircle2 } from "lucide-react";
+import { X, Lock, Mail, User, AlertCircle } from "lucide-react";
 
 export default function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, login, register, demoLogin } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, login, register } = useAuth();
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("sithum.manusha@careerflow.dev");
-  const [password, setPassword] = useState("••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
