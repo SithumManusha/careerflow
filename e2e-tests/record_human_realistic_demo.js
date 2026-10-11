@@ -235,35 +235,30 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   }
 
   // ==============================================================
-  // SCENE 2: Realistic Candidate Sign-In
+  // SCENE 2: Immediate Candidate Sign-In
   // ==============================================================
-  console.log('--- SCENE 2: Realistic Candidate Sign-In ---');
-  // Move smoothly to top right "Sign In" button in header
+  console.log('--- SCENE 2: Immediate Candidate Sign-In ---');
+  // Move swiftly to top right "Sign In" button in header
   const signInBtn = await page.$('header button:has-text("Sign In")');
   if (signInBtn) {
-    await humanClickElement(page, 'header button:has-text("Sign In")', 20);
-    await sleep(1000);
+    await humanClickElement(page, 'header button:has-text("Sign In")', 12);
+    await sleep(250);
 
-    // Realistic modal appears with authentic credentials: sithum.manusha@careerflow.dev
-    // User clicks "Sign In to Account"
+    // Modal appears, click "Sign In to Account" immediately without delay
     const submitBtn = await page.$('button:has-text("Sign In to Account")');
     if (submitBtn) {
-      await humanClickElement(page, 'button:has-text("Sign In to Account")', 18);
-      await sleep(1400);
+      await humanClickElement(page, 'button:has-text("Sign In to Account")', 10);
+      await sleep(350);
     }
-
-    // Modal closes automatically, user avatar updates
-    await page.keyboard.press('Escape');
-    await sleep(500);
   }
 
-  // Human hovers over user badge showing "Sithum Manusha"
+  // Quick cursor hover over active user badge showing "Sithum Manusha"
   const userBadge = await page.$('header button:has-text("Sithum"), header div:has-text("Sithum")');
   if (userBadge) {
     const box = await userBadge.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 16);
-      await sleep(800);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 14);
+      await sleep(500);
     }
   }
 
@@ -362,7 +357,26 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
       await sleep(350);
     }
   }
-  await sleep(800);
+  await sleep(500);
+
+  // Human tests interactive Keyword Density filter tabs (Missing -> Optimal -> All)
+  const missingFilterBtn = await page.$('button:has-text("Missing")');
+  if (missingFilterBtn) {
+    await humanClickElement(page, 'button:has-text("Missing")', 14);
+    await sleep(600);
+  }
+
+  const optimalFilterBtn = await page.$('button:has-text("Optimal")');
+  if (optimalFilterBtn) {
+    await humanClickElement(page, 'button:has-text("Optimal")', 14);
+    await sleep(600);
+  }
+
+  const allFilterBtn = await page.$('button:has-text("All")');
+  if (allFilterBtn) {
+    await humanClickElement(page, 'button:has-text("All")', 14);
+    await sleep(600);
+  }
 
   // ==============================================================
   // SCENE 5: 1-Page Smart ATS CV Builder (Left Editor + Right Live A4 Preview)
@@ -386,6 +400,25 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   // Human clicks "⚡ 1-Click Load Master CV"
   await humanClickElement(page, 'button:has-text("1-Click Load Master CV")', 18);
   await sleep(1400);
+
+  // Human tests live styling controls: Changes accent theme to Navy to show real-time A4 restyling!
+  const navyBtn = await page.$('button[title="Navy"], button[title="Indigo"]');
+  if (navyBtn) {
+    await humanClickElement(page, 'button[title="Navy"], button[title="Indigo"]', 14);
+    await sleep(700);
+  }
+
+  // Human tests live typography toggle (Executive Serif then back to Modern Sans)
+  const serifBtn = await page.$('button:has-text("Executive Serif")');
+  if (serifBtn) {
+    await humanClickElement(page, 'button:has-text("Executive Serif")', 14);
+    await sleep(600);
+  }
+  const sansBtn = await page.$('button:has-text("Modern Sans")');
+  if (sansBtn) {
+    await humanClickElement(page, 'button:has-text("Modern Sans")', 14);
+    await sleep(600);
+  }
 
   // In 1080p, the left form AND the entire right Live A4 preview are both visible side-by-side!
   // Human hovers over the Live A4 Document preview on the right
@@ -434,6 +467,13 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   }
   await page.goto(`${baseUrl}/interview-prep`, { waitUntil: 'networkidle' });
   await sleep(1200);
+
+  // Human clicks target benchmark role preset card
+  const roleCard = await page.$('button:has-text("Backend Engineer (Java / Cloud)")');
+  if (roleCard) {
+    await humanClickElement(page, 'button:has-text("Backend Engineer (Java / Cloud)")', 14);
+    await sleep(500);
+  }
 
   // Human clicks "Launch AI Mock Interview Session"
   await humanClickElement(page, 'button:has-text("Launch AI Mock Interview")', 18);
