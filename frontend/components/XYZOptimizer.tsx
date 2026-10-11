@@ -53,9 +53,28 @@ export default function XYZOptimizer() {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-            Original Unquantified Bullet Point:
-          </label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Original Unquantified Bullet Point:
+            </label>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-slate-400">1-Click Demos:</span>
+              {[
+                { label: "⚡ Spring Microservices", text: "Developed API endpoints with Spring Boot and improved response speed", skill: "Spring Boot 3" },
+                { label: "⚡ React & Redis Dashboard", text: "Built real-time financial tracking dashboard using Next.js and Redis", skill: "Next.js 14 & Redis" },
+                { label: "⚡ PWA Offline Database", text: "Implemented offline data sync using IndexedDB and Service Workers", skill: "IndexedDB & PWA" },
+              ].map((ex, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => { setInputBullet(ex.text); setTargetSkill(ex.skill); }}
+                  className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-medium transition-colors border border-slate-200 cursor-pointer"
+                >
+                  {ex.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <textarea
             value={inputBullet}
             onChange={(e) => setInputBullet(e.target.value)}

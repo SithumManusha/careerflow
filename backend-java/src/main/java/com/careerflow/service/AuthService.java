@@ -42,7 +42,7 @@ public class AuthService {
         if (!userAccountRepository.existsByEmail("demo@careerflow.dev")) {
             String salt = generateSalt();
             String hash = hashPassword("demo123", salt);
-            UserAccount demoUser = new UserAccount("demo@careerflow.dev", hash, salt, "Demo Engineer (Associate SE)");
+            UserAccount demoUser = new UserAccount("demo@careerflow.dev", hash, salt, "Sithum Manusha (Associate Software Engineer)");
             demoUser = userAccountRepository.save(demoUser);
 
             // Pre-seed 3 scan history records

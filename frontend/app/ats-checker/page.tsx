@@ -197,6 +197,36 @@ export default function ATSCheckerPage() {
     }
   };
 
+  const handleLoadSampleData = () => {
+    setCandidateName("Sithum Manusha");
+    setTargetRole("Backend Software Engineer (Java / Cloud)");
+    setResumeText(`Sithum Manusha | Software Engineer
+sithum.manusha@careerflow.dev | linkedin.com/in/sithummanusha | github.com/SithumManusha
+
+PROFESSIONAL SUMMARY:
+Results-driven Software Engineer with proven hands-on expertise building enterprise microservices in Java 21, Spring Boot 3, and Next.js 14. Architected high-throughput retail POS engines with offline-first background synchronization and automated personal finance platforms. Passionate about distributed systems resilience, clean architecture, and cloud scalability.
+
+TECHNICAL SKILLS:
+- Languages: Java 21, TypeScript, Python 3.12, SQL, JavaScript (ES6+)
+- Frameworks & Backend: Spring Boot 3, Spring Data JPA, Next.js 14, React 18, FastAPI, Tailwind CSS, Prisma ORM
+- Cloud, Databases & Caching: PostgreSQL (ACID), Redis (Token-Bucket Limiter), IndexedDB (PWA), Docker, Kubernetes, Git, GitHub Actions CI/CD
+- Core Competencies: Distributed Microservices, RESTful APIs, Offline-First PWA, Google XYZ Bullet Optimization, Test Automation (JUnit 5, Playwright)
+
+EXPERIENCE & PROJECTS:
+Software Engineer Intern | CareerFlow & Enterprise Systems | 2025 – Present
+• Architected multi-branch supermarket retail POS & ERP platform with offline-first IndexedDB background sync, preventing transaction data loss during network blackouts.
+• Engineered 12+ RESTful microservices in Spring Boot 3 and Java 21, reducing database query p95 latency by 42% through Redis caching and PostgreSQL indexing.
+• Built full-stack personal finance workspace featuring automated 11-category budgeting and real-time multi-currency conversions.
+• Developed automated ATS resume optimizer platform achieving 94% callback benchmarks using TF-IDF vectorization and cosine similarity matching.
+
+EDUCATION:
+BSc (Hons) in Software Engineering | Sri Lanka Technological Campus (SLTC) | 2022 – 2026`);
+
+    setSelectedJdIndex(0);
+    setJobDescription(SAMPLE_JOB_DESCRIPTIONS[0].text);
+    showToast("Loaded full sample CV (Sithum Manusha) & Target Job Description!");
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Header Banner */}
@@ -218,6 +248,13 @@ export default function ATSCheckerPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleLoadSampleData}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-3.5 py-2 rounded-lg transition-all cursor-pointer shadow-sm shadow-blue-500/20"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>⚡ 1-Click Load Full Data</span>
+          </button>
           <button
             onClick={handleReset}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 px-3.5 py-2 rounded-lg border border-slate-200 transition-colors cursor-pointer shadow-2xs"

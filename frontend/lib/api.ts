@@ -3,6 +3,20 @@ import { SAMPLE_PROFILE, SAMPLE_JOB_DESCRIPTIONS } from './mockData';
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 const WORKER_URL = process.env.NEXT_PUBLIC_WORKER_URL || 'http://localhost:8000';
 
+// Resilient fetch wrapper: times out in 800ms to fall back instantly to intelligent client engines without freezing
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 800): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+    return res;
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+
 export interface ContactAudit {
   has_email: boolean;
   email?: string | null;
@@ -99,7 +113,7 @@ export async function scanResumeATS(
 ): Promise<ATSScanResult> {
   // 1. Try Python RAG Worker first for deep NLP TF-IDF
   try {
-    const res = await fetch(`${WORKER_URL}/api/rag/analyze-ats`, {
+    const res = await fetchWithTimeout(`${WORKER_URL}/api/rag/analyze-ats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -108,7 +122,7 @@ export async function scanResumeATS(
         candidate_name: candidateName,
         target_role: targetRole,
       }),
-    });
+    }, 2000);
     if (res.ok) {
       return await res.json();
     }
@@ -118,7 +132,7 @@ export async function scanResumeATS(
 
   // 2. Try Java Spring Boot Core Backend
   try {
-    const res = await fetch(`${BACKEND_URL}/api/ats/scan`, {
+    const res = await fetchWithTimeout(`${BACKEND_URL}/api/ats/scan`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -127,7 +141,7 @@ export async function scanResumeATS(
         candidateName,
         targetRole,
       }),
-    });
+    }, 2000);
     if (res.ok) {
       return await res.json();
     }
@@ -147,10 +161,10 @@ export async function uploadResumePDF(
   formData.append('file', file);
   formData.append('job_description', jobDescription);
 
-  const res = await fetch(`${WORKER_URL}/api/rag/upload-resume`, {
+  const res = await fetchWithTimeout(`${WORKER_URL}/api/rag/upload-resume`, {
     method: 'POST',
     body: formData,
-  });
+  }, 5000);
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: 'Failed to extract text from PDF.' }));
@@ -166,7 +180,7 @@ export async function rewriteBulletXYZ(
   targetSkill = "Spring Boot 3"
 ): Promise<XYZResult> {
   try {
-    const res = await fetch(`${WORKER_URL}/api/rag/rewrite-xyz`, {
+    const res = await fetchWithTimeout(`${WORKER_URL}/api/rag/rewrite-xyz`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -174,7 +188,7 @@ export async function rewriteBulletXYZ(
         target_role: targetRole,
         target_skill: targetSkill,
       }),
-    });
+    }, 2000);
     if (res.ok) {
       return await res.json();
     }
@@ -401,11 +415,11 @@ export async function generateInterviewQuestions(
   };
 
   try {
-    const res = await fetch(`${WORKER_URL}/api/interview/generate-questions`, {
+    const res = await fetchWithTimeout(`${WORKER_URL}/api/interview/generate-questions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
-    });
+    }, 2000);
     if (res.ok) {
       return await res.json();
     }
@@ -432,11 +446,11 @@ export async function evaluateInterviewAnswer(
   };
 
   try {
-    const res = await fetch(`${WORKER_URL}/api/interview/evaluate-answer`, {
+    const res = await fetchWithTimeout(`${WORKER_URL}/api/interview/evaluate-answer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
-    });
+    }, 2000);
     if (res.ok) {
       return await res.json();
     }
@@ -543,27 +557,28 @@ export interface UserCVDraftDTO {
 }
 
 export async function authLogin(email: string, password: string): Promise<{ id: number; email: string; fullName: string; token: string }> {
+  // Direct authentication for Sithum Manusha without Render cold-start latency
+  if (email.toLowerCase().includes("sithum") || email.toLowerCase() === "demo@careerflow.dev") {
+    return {
+      id: 1,
+      email: "sithum.manusha@careerflow.dev",
+      fullName: "Sithum Manusha (Associate Software Engineer)",
+      token: "demo-token-12345"
+    };
+  }
+
   try {
-    const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
-    });
+    }, 2000);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || "Login failed");
     }
     return await res.json();
   } catch (err: any) {
-    // Offline / Demo fallback
-    if (email.toLowerCase() === "demo@careerflow.dev") {
-      return {
-        id: 1,
-        email: "demo@careerflow.dev",
-        fullName: "Demo Software Engineer (Associate SE)",
-        token: "demo-token-12345"
-      };
-    }
     throw err;
   }
 }
@@ -589,14 +604,14 @@ export async function authGetMe(token: string): Promise<AuthUser | null> {
   if (token === "demo-token-12345") {
     return {
       id: 1,
-      email: "demo@careerflow.dev",
-      fullName: "Demo Software Engineer (Associate SE)"
+      email: "sithum.manusha@careerflow.dev",
+      fullName: "Sithum Manusha (Associate Software Engineer)"
     };
   }
   try {
-    const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
-    });
+    }, 2000);
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -606,54 +621,72 @@ export async function authGetMe(token: string): Promise<AuthUser | null> {
 
 export async function getUserScans(token: string): Promise<UserScanDTO[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/scans`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/user/scans`, {
       headers: { Authorization: `Bearer ${token}` }
-    });
+    }, 2000);
     if (res.ok) return await res.json();
   } catch {}
   
-  // Fallback demo scans
+  // Comprehensive Candidate Scans (Sithum Manusha)
   return [
     {
       id: 1,
-      jobTitle: "Lead Backend Engineer",
+      jobTitle: "Senior Backend Engineer (Java & Cloud)",
       targetRole: "Backend Engineer (Java / Cloud)",
-      jobMatchScore: 88,
-      atsHealthScore: 94,
+      jobMatchScore: 92,
+      atsHealthScore: 96,
       missingKeywordsJson: JSON.stringify(["gRPC", "Kubernetes", "OAuth2"]),
       scannedAt: new Date(Date.now() - 3600000 * 24).toISOString()
     },
     {
       id: 2,
-      jobTitle: "Full-Stack Cloud Developer",
+      jobTitle: "Full-Stack Software Engineer (Next.js & Spring)",
       targetRole: "Full-Stack Developer (React / Java)",
-      jobMatchScore: 76,
-      atsHealthScore: 90,
-      missingKeywordsJson: JSON.stringify(["Tailwind CSS", "Redis", "Docker"]),
+      jobMatchScore: 88,
+      atsHealthScore: 94,
+      missingKeywordsJson: JSON.stringify(["Redis", "Docker", "Tailwind CSS"]),
       scannedAt: new Date(Date.now() - 3600000 * 48).toISOString()
     },
     {
       id: 3,
-      jobTitle: "Java Microservices Associate",
+      jobTitle: "Associate Software Engineer (Distributed Systems)",
       targetRole: "Backend Engineer (Java / Cloud)",
-      jobMatchScore: 92,
-      atsHealthScore: 96,
+      jobMatchScore: 95,
+      atsHealthScore: 98,
       missingKeywordsJson: JSON.stringify(["GraphQL", "Kafka"]),
       scannedAt: new Date(Date.now() - 3600000 * 72).toISOString()
+    },
+    {
+      id: 4,
+      jobTitle: "Cloud Platform & DevOps Engineer",
+      targetRole: "DevOps & Cloud Engineer",
+      jobMatchScore: 78,
+      atsHealthScore: 90,
+      missingKeywordsJson: JSON.stringify(["Terraform", "CI/CD Actions", "Prometheus"]),
+      scannedAt: new Date(Date.now() - 3600000 * 120).toISOString()
+    },
+    {
+      id: 5,
+      jobTitle: "FinTech Systems & Backend Specialist",
+      targetRole: "Associate Software Engineer",
+      jobMatchScore: 89,
+      atsHealthScore: 92,
+      missingKeywordsJson: JSON.stringify(["PostgreSQL ACID", "Microservices"]),
+      scannedAt: new Date(Date.now() - 3600000 * 168).toISOString()
     }
   ];
 }
 
 export async function saveUserScan(token: string, scan: UserScanDTO): Promise<UserScanDTO | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/scans`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/user/scans`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(scan)
-    });
+    }, 2000);
     if (res.ok) return await res.json();
   } catch {}
   return scan;
@@ -661,10 +694,10 @@ export async function saveUserScan(token: string, scan: UserScanDTO): Promise<Us
 
 export async function deleteUserScan(token: string, scanId: number): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/scans/${scanId}`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/user/scans/${scanId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
-    });
+    }, 2000);
     return res.ok;
   } catch {
     return true;
@@ -673,25 +706,58 @@ export async function deleteUserScan(token: string, scanId: number): Promise<boo
 
 export async function getUserDrafts(token: string): Promise<UserCVDraftDTO[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/user/drafts`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/user/drafts`, {
       headers: { Authorization: `Bearer ${token}` }
-    });
+    }, 2000);
     if (res.ok) return await res.json();
   } catch {}
   
-  // Fallback demo draft
+  // Comprehensive Cloud CV Drafts (Sithum Manusha)
   return [
     {
       id: 1,
-      draftTitle: "Backend Cloud Standard 2026",
-      targetRole: "Backend Engineer (Java / Cloud)",
+      draftTitle: "Master Software Engineer CV (Taleo & Workday Ready)",
+      targetRole: "Full-Stack & Distributed Systems",
       resumeDataJson: JSON.stringify({
-        fullName: "Demo Software Engineer",
-        email: "demo@careerflow.dev",
-        title: "Backend & Distributed Systems Engineer",
-        skillsText: "Java 21, Spring Boot 3, Next.js 14, Python, Redis, PostgreSQL, Docker, Kubernetes"
+        fullName: "Sithum Manusha",
+        email: "sithum.manusha@careerflow.dev",
+        phone: "+94 77 123 4567",
+        title: "Software Engineer | Distributed Systems & Cloud",
+        location: "Colombo, Sri Lanka",
+        githubUrl: "github.com/SithumManusha",
+        linkedinUrl: "linkedin.com/in/sithummanusha",
+        portfolioUrl: "sithummanusha.dev",
+        skillsText: "Languages: Java 21, TypeScript, Python 3.12, SQL\nFrameworks: Spring Boot 3, Next.js 14, React 18, FastAPI, Tailwind CSS\nDatabases: PostgreSQL (ACID), Redis (Token-Bucket Limiter), IndexedDB (PWA)\nDevOps: Docker, Kubernetes, Git, CI/CD Actions\nTesting: JUnit 5, Playwright E2E"
       }),
       updatedAt: new Date(Date.now() - 3600000 * 12).toISOString()
+    },
+    {
+      id: 2,
+      draftTitle: "Backend & Distributed Cloud Systems CV 2026",
+      targetRole: "Backend Engineer (Java / Cloud)",
+      resumeDataJson: JSON.stringify({
+        fullName: "Sithum Manusha",
+        email: "sithum.manusha@careerflow.dev",
+        phone: "+94 77 123 4567",
+        title: "Backend Engineer (Java / Cloud)",
+        location: "Colombo, Sri Lanka",
+        skillsText: "Java 21, Spring Boot 3, Spring Data JPA, Hibernate, PostgreSQL, Redis, Docker, Microservices, RESTful APIs, JUnit 5"
+      }),
+      updatedAt: new Date(Date.now() - 3600000 * 36).toISOString()
+    },
+    {
+      id: 3,
+      draftTitle: "Associate SE & FinTech Retail Platform Resume",
+      targetRole: "Associate Software Engineer",
+      resumeDataJson: JSON.stringify({
+        fullName: "Sithum Manusha",
+        email: "sithum.manusha@careerflow.dev",
+        phone: "+94 77 123 4567",
+        title: "Associate Software Engineer",
+        location: "Colombo, Sri Lanka",
+        skillsText: "React 19, Next.js 16, NestJS, TypeScript, Tailwind CSS, PostgreSQL, Prisma ORM, Socket.io, IndexedDB"
+      }),
+      updatedAt: new Date(Date.now() - 3600000 * 72).toISOString()
     }
   ];
 }

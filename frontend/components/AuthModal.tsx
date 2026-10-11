@@ -1,17 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { X, Lock, Mail, User, Sparkles, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, login, register, demoLogin } = useAuth();
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("sithum.manusha@careerflow.dev");
+  const [password, setPassword] = useState("••••••••");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeAuthModal();
+    };
+    if (isAuthModalOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isAuthModalOpen, closeAuthModal]);
 
   if (!isAuthModalOpen) return null;
 
@@ -34,15 +44,11 @@ export default function AuthModal() {
     setLoading(false);
   };
 
-  const handleDemo = async () => {
-    setLoading(true);
-    setError(null);
-    await demoLogin();
-    setLoading(false);
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+    <div 
+      onClick={(e) => { if (e.target === e.currentTarget) closeAuthModal(); }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn"
+    >
       <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl text-slate-200 relative">
         <button
           onClick={closeAuthModal}
@@ -59,22 +65,6 @@ export default function AuthModal() {
           <p className="text-xs text-slate-400 mt-1">
             Access your ATS scan history, track keyword scores, and manage cloud CV drafts
           </p>
-        </div>
-
-        {/* 1-Click Quick Demo Sign-in */}
-        <button
-          onClick={handleDemo}
-          disabled={loading}
-          className="w-full mb-5 py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4 text-amber-300" />
-          <span>⚡ 1-Click Demo Sign-In (Recruiter Preview)</span>
-        </button>
-
-        <div className="relative flex py-2 items-center mb-5">
-          <div className="flex-grow border-t border-slate-800"></div>
-          <span className="flex-shrink mx-3 text-xs text-slate-500 uppercase tracking-wider font-mono">Or with credentials</span>
-          <div className="flex-grow border-t border-slate-800"></div>
         </div>
 
         {/* Tab switcher */}

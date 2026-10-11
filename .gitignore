@@ -37,3 +37,9 @@ playwright/.cache/
 *.log
 .DS_Store
 Thumbs.db
+
+# Media & Output Videos
+*.mp4
+*.webm
+output_videos/
+**/output_videos/

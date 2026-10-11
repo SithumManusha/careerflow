@@ -101,7 +101,7 @@ export default function DashboardPage() {
           className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg cursor-pointer inline-flex items-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
-          <span>Sign In / 1-Click Demo</span>
+          <span>Sign In to Account</span>
         </button>
       </div>
     );

@@ -33,23 +33,35 @@ import { SAMPLE_JOB_DESCRIPTIONS } from "@/lib/mockData";
 
 export default function CVBuilderPage() {
   const { user, token, openAuthModal } = useAuth();
-  // Core Contact Info
-  const [fullName, setFullName] = useState("");
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [githubUrl, setGithubUrl] = useState("");
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [portfolioUrl, setPortfolioUrl] = useState("");
+  // Core Contact Info (Pre-filled Master Profile)
+  const [fullName, setFullName] = useState("Sithum Manusha");
+  const [title, setTitle] = useState("Software Engineer | Distributed Systems & Cloud");
+  const [location, setLocation] = useState("Colombo, Sri Lanka");
+  const [email, setEmail] = useState("sithum.manusha@careerflow.dev");
+  const [phone, setPhone] = useState("+94 77 123 4567");
+  const [githubUrl, setGithubUrl] = useState("github.com/SithumManusha");
+  const [linkedinUrl, setLinkedinUrl] = useState("linkedin.com/in/sithummanusha");
+  const [portfolioUrl, setPortfolioUrl] = useState("sithummanusha.dev");
 
   // Section Contents
-  const [summaryText, setSummaryText] = useState("");
-  const [skillsText, setSkillsText] = useState("");
-  const [experienceText, setExperienceText] = useState("");
-  const [educationText, setEducationText] = useState("");
-  const [certificationsText, setCertificationsText] = useState("");
-  const [activitiesText, setActivitiesText] = useState("");
+  const [summaryText, setSummaryText] = useState("Results-driven Software Engineer with hands-on production expertise in Java 21, Spring Boot 3, and Next.js 14 microservices. Architected high-throughput retail POS engines with offline-first background synchronization and automated personal finance analytics platforms. Passionate about distributed systems resilience, clean architecture, and cloud scalability.");
+  const [skillsText, setSkillsText] = useState(`Languages & Core: Java 21, TypeScript, Python 3.12, SQL, JavaScript (ES6+)
+Frameworks & Libraries: Spring Boot 3, Spring Data JPA, Next.js 14, React 18, FastAPI, Tailwind CSS, Prisma ORM
+Databases & Caching: PostgreSQL (ACID), Redis (Token-Bucket Limiter), IndexedDB (PWA)
+DevOps & Cloud: Docker, Kubernetes, Git, GitHub Actions CI/CD, Render, Vercel
+Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimization, JUnit 5, Playwright E2E`);
+  const [experienceText, setExperienceText] = useState(`Software Engineer Intern | CareerFlow & Enterprise Systems | 2025 – Present
+• Architected multi-branch retail POS & ERP platform handling high transaction concurrency with offline-first IndexedDB background sync, preventing transaction loss during network blackouts.
+• Engineered 12+ RESTful microservices in Spring Boot 3 and Java 21, reducing database query p95 latency by 42% through Redis caching and PostgreSQL indexing.
+• Built full-stack personal finance workspace featuring automated 11-category budgeting and real-time multi-currency conversions.
+• Developed automated ATS resume optimizer platform achieving 94% callback benchmarks using TF-IDF vectorization and cosine similarity matching.`);
+  const [educationText, setEducationText] = useState(`BSc (Hons) in Software Engineering | Sri Lanka Technological Campus (SLTC) | 2022 – 2026
+• Relevant Coursework: Data Structures & Algorithms, Distributed Systems, Database Management Systems, Advanced Web Development, Software Quality Assurance`);
+  const [certificationsText, setCertificationsText] = useState(`• Meta Certified Back-End Developer Specialization
+• Oracle Certified Foundations Associate (Java)
+• Postman API Fundamentals Student Expert`);
+  const [activitiesText, setActivitiesText] = useState(`• IEEE Computer Society Member | Active open-source contributor and technical mentor.
+• Hackathon Finalist: Developed real-time collaborative expense settlement engine.`);
 
   // Section Ordering & Visibility
   const [sectionOrder, setSectionOrder] = useState<string[]>([
@@ -219,6 +231,43 @@ export default function CVBuilderPage() {
     setCertificationsText("");
     setActivitiesText("");
     showToast("All fields cleared.");
+  };
+
+  const handleLoadMasterProfile = () => {
+    setFullName("Sithum Manusha");
+    setTitle("Software Engineer | Distributed Systems & Cloud");
+    setLocation("Colombo, Sri Lanka");
+    setEmail("sithum.manusha@careerflow.dev");
+    setPhone("+94 77 123 4567");
+    setGithubUrl("github.com/SithumManusha");
+    setLinkedinUrl("linkedin.com/in/sithummanusha");
+    setPortfolioUrl("sithummanusha.dev");
+
+    setSummaryText("Results-driven Software Engineer with hands-on production expertise in Java 21, Spring Boot 3, and Next.js 14 microservices. Architected high-throughput retail POS engines with offline-first background synchronization and automated personal finance analytics platforms. Passionate about distributed systems resilience, clean architecture, and cloud scalability.");
+
+    setSkillsText(`Languages & Core: Java 21, TypeScript, Python 3.12, SQL, JavaScript (ES6+)
+Frameworks & Libraries: Spring Boot 3, Spring Data JPA, Next.js 14, React 18, FastAPI, Tailwind CSS, Prisma ORM
+Databases & Caching: PostgreSQL (ACID), Redis (Token-Bucket Limiter), IndexedDB (PWA)
+DevOps & Cloud: Docker, Kubernetes, Git, GitHub Actions CI/CD, Render, Vercel
+Architecture & Quality: Microservices, RESTful APIs, Google XYZ Bullet Optimization, JUnit 5, Playwright E2E`);
+
+    setExperienceText(`Software Engineer Intern | CareerFlow & Enterprise Systems | 2025 – Present
+• Architected multi-branch retail POS & ERP platform handling high transaction concurrency with offline-first IndexedDB background sync, preventing transaction loss during network blackouts.
+• Engineered 12+ RESTful microservices in Spring Boot 3 and Java 21, reducing database query p95 latency by 42% through Redis caching and PostgreSQL indexing.
+• Built full-stack personal finance workspace featuring automated 11-category budgeting and real-time multi-currency conversions.
+• Developed automated ATS resume optimizer platform achieving 94% callback benchmarks using TF-IDF vectorization and cosine similarity matching.`);
+
+    setEducationText(`BSc (Hons) in Software Engineering | Sri Lanka Technological Campus (SLTC) | 2022 – 2026
+• Relevant Coursework: Data Structures & Algorithms, Distributed Systems, Database Management Systems, Advanced Web Development, Software Quality Assurance`);
+
+    setCertificationsText(`• Meta Certified Back-End Developer Specialization
+• Oracle Certified Foundations Associate (Java)
+• Postman API Fundamentals Student Expert`);
+
+    setActivitiesText(`• IEEE Computer Society Member | Active open-source contributor and technical mentor.
+• Hackathon Finalist: Developed real-time collaborative expense settlement engine.`);
+
+    showToast("Restored Master Software Engineer Profile (Sithum Manusha)!");
   };
 
   // Section Reordering Helper
@@ -548,6 +597,14 @@ export default function CVBuilderPage() {
 
         {/* Global Action Bar */}
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleLoadMasterProfile}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-sm shadow-blue-500/20"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>⚡ 1-Click Load Master CV</span>
+          </button>
+
           <button
             onClick={handleSaveToCloud}
             title={user ? "Save draft directly to your CareerFlow account" : "Sign in to save draft to cloud"}
