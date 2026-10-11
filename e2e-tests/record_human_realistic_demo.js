@@ -83,40 +83,39 @@ async function humanClickElement(page, selector, steps = 20) {
 
 async function humanType(page, selector, text, clear = true) {
   try {
-    await humanClickElement(page, selector, 16);
-    // Real human cognitive pause before starting to type (deciding and looking at keyboard): 450ms - 650ms
-    await sleep(450 + Math.floor(Math.random() * 200));
+    await humanClickElement(page, selector, 10);
+    // Crisp human start delay: 180ms - 260ms
+    await sleep(180 + Math.floor(Math.random() * 80));
 
     if (clear) {
       await page.fill(selector, '');
-      await sleep(180);
+      await sleep(100);
     }
 
     let wordCount = 0;
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
-      let delay = 90 + Math.floor(Math.random() * 45); // Natural human base delay: 90ms - 135ms (~65-72 WPM)
+      let delay = 55 + Math.floor(Math.random() * 25); // Confident, organic typing (~78-85 WPM)
 
       if (char >= 'a' && char <= 'z') {
-        delay = 85 + Math.floor(Math.random() * 40);
+        delay = 50 + Math.floor(Math.random() * 20);
       } else if (char >= 'A' && char <= 'Z') {
-        delay = 140 + Math.floor(Math.random() * 50); // Shift key coordination
+        delay = 85 + Math.floor(Math.random() * 30); // Shift key delay
       } else if (char === ' ') {
-        delay = 180 + Math.floor(Math.random() * 90); // Spacebar transition pause
+        delay = 110 + Math.floor(Math.random() * 45); // Space transition
         wordCount++;
-        // Natural human mid-sentence thought pause every 4-5 words
         if (wordCount % 5 === 0) {
-          await sleep(250 + Math.floor(Math.random() * 200));
+          await sleep(130 + Math.floor(Math.random() * 90)); // Micro thought pause
         }
       } else if (char === '.' || char === ',' || char === '+' || char === '&' || char === ':' || char === '-') {
-        delay = 230 + Math.floor(Math.random() * 110); // Reaching for punctuation
+        delay = 120 + Math.floor(Math.random() * 50);
       }
 
       await page.keyboard.type(char, { delay });
     }
 
-    // Natural human inspection pause after typing finishes (reading what was written): 750ms - 1100ms
-    await sleep(750 + Math.floor(Math.random() * 350));
+    // Quick review delay: 280ms - 400ms
+    await sleep(280 + Math.floor(Math.random() * 120));
   } catch (e) {}
 }
 
@@ -227,375 +226,316 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
 
   console.log('Navigating to CareerFlow App:', baseUrl);
   await page.goto(baseUrl, { waitUntil: 'networkidle', timeout: 30000 });
-  await sleep(1500);
+  await sleep(600);
 
   // ==============================================================
-  // SCENE 1: Landing Page Hero & Metrics Inspection
+  // SCENE 1: Immediate Candidate Sign-In & Platform Hero
   // ==============================================================
-  console.log('--- SCENE 1: Landing Page Hero & Metrics ---');
-  await humanMoveTo(page, 960, 320, 22);
-  await sleep(1000);
-
-  // Hover across Hero Action Buttons
-  const scanCta = await page.$('a:has-text("Scan Resume Free")');
-  if (scanCta) {
-    const box = await scanCta.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 16);
-      await sleep(600);
-    }
-  }
-
-  // Hover over metric cards with human pacing
-  const cards = await page.$$('.grid.grid-cols-2 > div, .grid-cols-4 > div');
-  for (const card of cards.slice(0, 3)) {
-    const box = await card.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 15);
-      await sleep(400);
-    }
-  }
-
-  // ==============================================================
-  // SCENE 2: Immediate Candidate Sign-In
-  // ==============================================================
-  console.log('--- SCENE 2: Immediate Candidate Sign-In ---');
-  // Move swiftly to top right "Sign In" button in header
+  console.log('--- SCENE 1: Immediate Candidate Sign-In ---');
+  // Immediately glide to top right "Sign In" button in header within 1s!
+  await humanMoveTo(page, 1500, 42, 10);
   const signInBtn = await page.$('header button:has-text("Sign In")');
   if (signInBtn) {
-    await humanClickElement(page, 'header button:has-text("Sign In")', 12);
-    await sleep(250);
+    await humanClickElement(page, 'header button:has-text("Sign In")', 8);
+    await sleep(200);
 
-    // Modal appears, click "Sign In to Account" immediately without delay
+    // Modal appears immediately, user clicks "Sign In to Account"
     const submitBtn = await page.$('button:has-text("Sign In to Account")');
     if (submitBtn) {
-      await humanClickElement(page, 'button:has-text("Sign In to Account")', 10);
-      await sleep(350);
+      await humanClickElement(page, 'button:has-text("Sign In to Account")', 8);
+      await sleep(250);
     }
   }
 
-  // Quick cursor hover over active user badge showing "Sithum Manusha"
+  // Active user avatar badge ("Sithum Manusha") appears
   const userBadge = await page.$('header button:has-text("Sithum"), header div:has-text("Sithum")');
   if (userBadge) {
     const box = await userBadge.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 14);
-      await sleep(500);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 10);
+      await sleep(350);
     }
   }
 
-  // ==============================================================
-  // SCENE 3: Google XYZ Bullet Point Optimizer
-  // ==============================================================
-  console.log('--- SCENE 3: Google XYZ Bullet Point Optimizer ---');
-  await humanSmoothScroll(page, 720);
-  await sleep(800);
-
-  // Human types custom unquantified bullet point into textarea
-  await humanType(page, 'textarea[placeholder*="Developed API"]', 'Engineered 12+ RESTful microservices in Spring Boot 3 with Redis caching and PostgreSQL.');
+  // Quick glance at Hero Metrics
+  await humanMoveTo(page, 960, 320, 12);
   await sleep(400);
+
+  // ==============================================================
+  // SCENE 2: Google XYZ Bullet Point Optimizer
+  // ==============================================================
+  console.log('--- SCENE 2: Google XYZ Bullet Point Optimizer ---');
+  await humanSmoothScroll(page, 720, 14);
+  await sleep(350);
+
+  // Human types custom bullet point into textarea
+  await humanType(page, 'textarea[placeholder*="Developed API"]', 'Engineered 12+ RESTful microservices in Spring Boot 3 with Redis caching and PostgreSQL.');
+  await sleep(250);
 
   // Human types target skill
   await humanType(page, 'input[placeholder*="Java 21"]', 'Spring Boot 3 & Redis');
-  await sleep(400);
+  await sleep(250);
 
   // Human clicks "Generate Google XYZ Bullet"
-  await humanClickElement(page, 'button:has-text("Generate Google XYZ Bullet")', 18);
-  await sleep(2400);
+  await humanClickElement(page, 'button:has-text("Generate Google XYZ Bullet")', 12);
+  await sleep(1400);
 
   // Human inspects the result ScoreGauge and Before vs After
   const scoreGauge = await page.$('svg circle, .font-mono:has-text("%")');
   if (scoreGauge) {
     const box = await scoreGauge.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 18);
-      await sleep(1000);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
+      await sleep(500);
     }
   }
 
   // Human clicks "Copy" button
   const copyBtn = await page.$('button:has-text("Copy")');
   if (copyBtn) {
-    await humanClickElement(page, 'button:has-text("Copy")', 16);
-    await sleep(1000);
+    await humanClickElement(page, 'button:has-text("Copy")', 10);
+    await sleep(400);
   }
 
   // ==============================================================
-  // SCENE 4: ATS Resume Compatibility Scanner (Side-by-Side Widescreen)
+  // SCENE 3: ATS Resume Compatibility Scanner (Side-by-Side Widescreen)
   // ==============================================================
-  console.log('--- SCENE 4: ATS Resume Compatibility Scanner ---');
-  await humanSmoothScroll(page, 0);
-  await sleep(500);
+  console.log('--- SCENE 3: ATS Resume Compatibility Scanner ---');
+  await humanSmoothScroll(page, 0, 12);
+  await sleep(250);
 
   // Move cursor to header link and click
   const navAts = await page.$('header a:has-text("ATS Resume Scanner")');
   if (navAts) {
     const box = await navAts.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 18);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
       await page.evaluate(() => { if (window.__triggerCursorClick) window.__triggerCursorClick(); });
     }
   }
   await page.goto(`${baseUrl}/ats-checker`, { waitUntil: 'networkidle' });
-  await sleep(1200);
+  await sleep(600);
 
   // Candidate types their full name with authentic human cadence
   await humanType(page, 'input[placeholder*="Your Full Name"]', 'Sithum Manusha');
-  await sleep(500);
+  await sleep(250);
 
   // Human clicks "⚡ 1-Click Load Full Data"
-  await humanClickElement(page, 'button:has-text("1-Click Load Full Data")', 20);
-  await sleep(1200);
+  await humanClickElement(page, 'button:has-text("1-Click Load Full Data")', 14);
+  await sleep(600);
 
   // In 1080p, both columns (Candidate Resume & Target JD) are visible side-by-side!
-  // Human moves cursor smoothly between Candidate CV and Job Description
-  await humanMoveTo(page, 480, 520, 16);
-  await sleep(600);
-  await humanMoveTo(page, 1440, 520, 16);
-  await sleep(600);
+  await humanMoveTo(page, 480, 520, 10);
+  await sleep(250);
+  await humanMoveTo(page, 1440, 520, 10);
+  await sleep(250);
 
   // Human clicks "Run ATS Compatibility Scan"
-  await humanSmoothScroll(page, 380);
-  await sleep(500);
+  await humanSmoothScroll(page, 380, 12);
+  await sleep(250);
 
-  await humanClickElement(page, 'button:has-text("Run ATS Compatibility Scan")', 18);
-  await sleep(2800);
+  await humanClickElement(page, 'button:has-text("Run ATS Compatibility Scan")', 12);
+  await sleep(1800);
 
   // Human inspects the Match Scores (92% Match Score, 96% ATS Health)
-  await humanSmoothScroll(page, 580);
-  await sleep(1000);
+  await humanSmoothScroll(page, 580, 12);
+  await sleep(600);
 
-  await humanMoveTo(page, 620, 480, 18); // Left gauge
-  await sleep(700);
-  await humanMoveTo(page, 1300, 480, 18); // Right gauge
-  await sleep(700);
+  await humanMoveTo(page, 620, 480, 12); // Left gauge
+  await sleep(350);
+  await humanMoveTo(page, 1300, 480, 12); // Right gauge
+  await sleep(350);
 
   // Human scrolls down to review Matched Keywords & Recommendations
-  await humanSmoothScroll(page, 950);
-  await sleep(1200);
-
-  // Human hovers over keyword badges
-  const keywords = await page.$$('span:has-text("Java"), span:has-text("Spring Boot"), span:has-text("PostgreSQL")');
-  for (const kw of keywords.slice(0, 4)) {
-    const box = await kw.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 14);
-      await sleep(350);
-    }
-  }
+  await humanSmoothScroll(page, 950, 12);
   await sleep(500);
 
   // Human tests interactive Keyword Density filter tabs (Missing -> Optimal -> All)
   const missingFilterBtn = await page.$('button:has-text("Missing")');
   if (missingFilterBtn) {
-    await humanClickElement(page, 'button:has-text("Missing")', 14);
-    await sleep(600);
+    await humanClickElement(page, 'button:has-text("Missing")', 10);
+    await sleep(350);
   }
 
   const optimalFilterBtn = await page.$('button:has-text("Optimal")');
   if (optimalFilterBtn) {
-    await humanClickElement(page, 'button:has-text("Optimal")', 14);
-    await sleep(600);
+    await humanClickElement(page, 'button:has-text("Optimal")', 10);
+    await sleep(350);
   }
 
   const allFilterBtn = await page.$('button:has-text("All")');
   if (allFilterBtn) {
-    await humanClickElement(page, 'button:has-text("All")', 14);
-    await sleep(600);
+    await humanClickElement(page, 'button:has-text("All")', 10);
+    await sleep(350);
   }
 
   // ==============================================================
-  // SCENE 5: 1-Page Smart ATS CV Builder (Left Editor + Right Live A4 Preview)
+  // SCENE 4: 1-Page Smart ATS CV Builder (Left Editor + Right Live A4 Preview)
   // ==============================================================
-  console.log('--- SCENE 5: 1-Page Smart ATS CV Builder ---');
-  await humanSmoothScroll(page, 0);
-  await sleep(500);
+  console.log('--- SCENE 4: 1-Page Smart ATS CV Builder ---');
+  await humanSmoothScroll(page, 0, 12);
+  await sleep(250);
 
   // Move cursor to header link and click
   const navCv = await page.$('header a:has-text("1-Page ATS CV Builder")');
   if (navCv) {
     const box = await navCv.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 18);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
       await page.evaluate(() => { if (window.__triggerCursorClick) window.__triggerCursorClick(); });
     }
   }
   await page.goto(`${baseUrl}/cv-builder`, { waitUntil: 'networkidle' });
-  await sleep(1200);
+  await sleep(600);
 
   // Human clicks "⚡ 1-Click Load Master CV"
-  await humanClickElement(page, 'button:has-text("1-Click Load Master CV")', 18);
-  await sleep(1400);
+  await humanClickElement(page, 'button:has-text("1-Click Load Master CV")', 14);
+  await sleep(700);
 
-  // Human tests live styling controls: Changes accent theme to Navy to show real-time A4 restyling!
+  // Human tests live styling controls: Changes accent theme to Navy
   const navyBtn = await page.$('button[title="Navy"], button[title="Indigo"]');
   if (navyBtn) {
-    await humanClickElement(page, 'button[title="Navy"], button[title="Indigo"]', 14);
-    await sleep(700);
+    await humanClickElement(page, 'button[title="Navy"], button[title="Indigo"]', 10);
+    await sleep(400);
   }
 
-  // Human tests live typography toggle (Executive Serif then back to Modern Sans)
+  // Human tests live typography toggle
   const serifBtn = await page.$('button:has-text("Executive Serif")');
   if (serifBtn) {
-    await humanClickElement(page, 'button:has-text("Executive Serif")', 14);
-    await sleep(600);
+    await humanClickElement(page, 'button:has-text("Executive Serif")', 10);
+    await sleep(300);
   }
   const sansBtn = await page.$('button:has-text("Modern Sans")');
   if (sansBtn) {
-    await humanClickElement(page, 'button:has-text("Modern Sans")', 14);
-    await sleep(600);
+    await humanClickElement(page, 'button:has-text("Modern Sans")', 10);
+    await sleep(300);
   }
 
   // In 1080p, the left form AND the entire right Live A4 preview are both visible side-by-side!
-  // Human hovers over the Live A4 Document preview on the right
-  await humanMoveTo(page, 1380, 480, 20);
-  await sleep(1000);
+  await humanMoveTo(page, 1380, 480, 14);
+  await sleep(600);
 
-  // Human moves cursor over Pre-Flight checks on the right side (all 6 green checks)
+  // Human moves cursor over Pre-Flight checks
   const preflightBox = await page.$('div:has-text("ATS 1-Page Pre-Flight Checklist")');
   if (preflightBox) {
     const box = await preflightBox.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + 40, 18);
-      await sleep(900);
-    }
-  }
-
-  // Human hovers over live A4 Page Budget Gauge
-  const budgetGauge = await page.$('div:has-text("A4 Capacity"), span:has-text("Optimal 1-Page")');
-  if (budgetGauge) {
-    const box = await budgetGauge.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 16);
-      await sleep(800);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + 40, 12);
+      await sleep(500);
     }
   }
 
   // Human clicks "Save to Cloud"
-  await humanClickElement(page, 'button:has-text("Save to Cloud")', 16);
-  await sleep(1000);
+  await humanClickElement(page, 'button:has-text("Save to Cloud")', 12);
+  await sleep(500);
 
   // ==============================================================
-  // SCENE 6: AI Mock Interview Studio
+  // SCENE 5: AI Mock Interview Studio
   // ==============================================================
-  console.log('--- SCENE 6: AI Mock Interview Studio ---');
-  await humanSmoothScroll(page, 0);
-  await sleep(500);
+  console.log('--- SCENE 5: AI Mock Interview Studio ---');
+  await humanSmoothScroll(page, 0, 12);
+  await sleep(250);
 
   // Move cursor to header link and click
   const navInterview = await page.$('header a:has-text("AI Mock Interview")');
   if (navInterview) {
     const box = await navInterview.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 18);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
       await page.evaluate(() => { if (window.__triggerCursorClick) window.__triggerCursorClick(); });
     }
   }
   await page.goto(`${baseUrl}/interview-prep`, { waitUntil: 'networkidle' });
-  await sleep(1200);
+  await sleep(600);
 
   // Human clicks target benchmark role preset card
   const roleCard = await page.$('button:has-text("Backend Engineer (Java / Cloud)")');
   if (roleCard) {
-    await humanClickElement(page, 'button:has-text("Backend Engineer (Java / Cloud)")', 14);
-    await sleep(500);
+    await humanClickElement(page, 'button:has-text("Backend Engineer (Java / Cloud)")', 10);
+    await sleep(300);
   }
 
   // Human clicks "Launch AI Mock Interview Session"
-  await humanClickElement(page, 'button:has-text("Launch AI Mock Interview")', 18);
-  await sleep(2200);
+  await humanClickElement(page, 'button:has-text("Launch AI Mock Interview")', 14);
+  await sleep(1500);
 
   // Human smoothly scrolls to the Question card
-  await humanSmoothScroll(page, 320);
-  await sleep(900);
+  await humanSmoothScroll(page, 320, 12);
+  await sleep(400);
 
   // Human clicks "⚡ 1-Click Load Senior Answer"
-  await humanClickElement(page, 'button:has-text("1-Click Load Senior Answer")', 18);
-  await sleep(1000);
-
-  // Human clicks into response box and types an architectural conclusion with natural human cadence
-  await humanType(page, 'textarea[placeholder*="Type your response"]', ' In addition, Redis token-bucket rate limiting is configured to protect downstream services.', false);
+  await humanClickElement(page, 'button:has-text("1-Click Load Senior Answer")', 14);
   await sleep(600);
 
   // Human moves to submit button and clicks "Evaluate Answer"
-  await humanClickElement(page, 'button:has-text("Evaluate Answer")', 18);
-  await sleep(2800);
+  await humanClickElement(page, 'button:has-text("Evaluate Answer")', 14);
+  await sleep(1800);
 
   // Human scrolls down to review AI Evaluation & Strengths
-  await humanSmoothScroll(page, 560);
-  await sleep(1400);
+  await humanSmoothScroll(page, 560, 12);
+  await sleep(700);
 
   // Human moves cursor over the score badge
   const scoreCard = await page.$('.font-extrabold:has-text("%"), .text-3xl:has-text("%")');
   if (scoreCard) {
     const box = await scoreCard.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 16);
-      await sleep(1000);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
+      await sleep(600);
     }
   }
 
   // ==============================================================
-  // SCENE 7: Member Dashboard & Account Analytics
+  // SCENE 6: Member Dashboard & Account Analytics
   // ==============================================================
-  console.log('--- SCENE 7: Member Dashboard & Account Analytics ---');
-  await humanSmoothScroll(page, 0);
-  await sleep(500);
+  console.log('--- SCENE 6: Member Dashboard & Account Analytics ---');
+  await humanSmoothScroll(page, 0, 12);
+  await sleep(250);
 
   // Human moves cursor to header link and clicks Dashboard
   const dashNav = await page.$('header a:has-text("Dashboard")');
   if (dashNav) {
     const box = await dashNav.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 18);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 12);
       await page.evaluate(() => { if (window.__triggerCursorClick) window.__triggerCursorClick(); });
     }
   }
   await page.goto(`${baseUrl}/dashboard`, { waitUntil: 'networkidle' });
-  await sleep(1400);
+  await sleep(600);
 
   // In 1080p, all 3 metric cards are clearly visible in a single row
   const statCards = await page.$$('.grid.grid-cols-1.md\\:grid-cols-3 > div, .grid > div');
   for (const card of statCards.slice(0, 3)) {
     const box = await card.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 15);
-      await sleep(400);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 10);
+      await sleep(200);
     }
   }
 
   // Human scrolls down to view Enterprise Scan History
-  await humanSmoothScroll(page, 380);
-  await sleep(1200);
-
-  // Human hovers over scan cards
-  const scanRows = await page.$$('.grid.grid-cols-1.gap-4 > div, div:has-text("Match Score")');
-  for (const row of scanRows.slice(0, 3)) {
-    const box = await row.boundingBox();
-    if (box) {
-      await humanMoveTo(page, box.x + 250, box.y + box.height / 2, 15);
-      await sleep(450);
-    }
-  }
+  await humanSmoothScroll(page, 380, 12);
+  await sleep(500);
 
   // Human clicks "Saved Cloud CVs" tab
-  await humanClickElement(page, 'button:has-text("Saved Cloud CVs")', 18);
-  await sleep(1500);
+  await humanClickElement(page, 'button:has-text("Saved Cloud CVs")', 12);
+  await sleep(600);
 
   // Human hovers over saved CV drafts
   const draftCards = await page.$$('.grid > div');
-  for (const draft of draftCards.slice(0, 3)) {
+  for (const draft of draftCards.slice(0, 2)) {
     const box = await draft.boundingBox();
     if (box) {
-      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 15);
-      await sleep(500);
+      await humanMoveTo(page, box.x + box.width / 2, box.y + box.height / 2, 10);
+      await sleep(250);
     }
   }
 
   // Smooth scroll back to top and hold
-  await humanSmoothScroll(page, 0);
-  await humanMoveTo(page, 960, 480, 20);
-  await sleep(1800);
+  await humanSmoothScroll(page, 0, 12);
+  await humanMoveTo(page, 960, 480, 12);
+  await sleep(800);
 
   console.log('Recording complete! Finalizing Full HD 1080p video context...');
   await page.close();
