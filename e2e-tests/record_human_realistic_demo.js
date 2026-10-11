@@ -46,7 +46,7 @@ async function humanMoveTo(page, targetX, targetY, durationSteps = 24) {
   } catch (e) {}
 }
 
-async function humanClickElement(page, selector, steps = 20) {
+async function humanClickElement(page, selector, steps = 14) {
   try {
     const el = await page.$(selector);
     if (!el) {
@@ -55,26 +55,26 @@ async function humanClickElement(page, selector, steps = 20) {
     }
     const box = await el.boundingBox();
     if (!box) {
-      await el.click().catch(() => {});
+      await el.click({ timeout: 1000, force: true }).catch(() => {});
       return true;
     }
 
-    const targetX = Math.round(box.x + box.width / 2 + (Math.random() * 6 - 3));
+    const targetX = Math.round(box.x + box.width / 2 + (Math.random() * 4 - 2));
     const targetY = Math.round(box.y + box.height / 2 + (Math.random() * 4 - 2));
 
     await humanMoveTo(page, targetX, targetY, steps);
-    await sleep(150 + Math.floor(Math.random() * 70)); // Visual focus reaction delay
+    await sleep(100 + Math.floor(Math.random() * 50)); // Visual focus reaction delay
 
     // Trigger visual cursor ripple
     await page.evaluate(() => {
       if (window.__triggerCursorClick) window.__triggerCursorClick();
     }).catch(() => {});
 
+    // Native mouse down and up triggers the click immediately
     await page.mouse.down();
-    await sleep(75 + Math.floor(Math.random() * 25));
+    await sleep(65 + Math.floor(Math.random() * 20));
     await page.mouse.up();
-    await el.click().catch(() => {});
-    await sleep(300 + Math.floor(Math.random() * 100));
+    await sleep(180 + Math.floor(Math.random() * 80));
     return true;
   } catch (e) {
     return false;
@@ -237,7 +237,8 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   const signInBtn = await page.$('header button:has-text("Sign In")');
   if (signInBtn) {
     await humanClickElement(page, 'header button:has-text("Sign In")', 8);
-    await sleep(200);
+    await page.waitForSelector('button:has-text("Sign In to Account")', { timeout: 3000 }).catch(() => {});
+    await sleep(150);
 
     // Modal appears immediately, user clicks "Sign In to Account"
     const submitBtn = await page.$('button:has-text("Sign In to Account")');
