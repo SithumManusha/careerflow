@@ -81,20 +81,42 @@ async function humanClickElement(page, selector, steps = 20) {
   }
 }
 
-async function humanType(page, selector, text) {
+async function humanType(page, selector, text, clear = true) {
   try {
     await humanClickElement(page, selector, 16);
-    await sleep(150);
-    // Clear field first
-    await page.fill(selector, '');
-    await sleep(100);
-    for (const char of text) {
-      await page.keyboard.type(char, { delay: 28 + Math.floor(Math.random() * 32) });
-      if (Math.random() < 0.08) {
-        await sleep(100); // Natural human word boundary pause
-      }
+    // Real human cognitive pause before starting to type (deciding and looking at keyboard): 450ms - 650ms
+    await sleep(450 + Math.floor(Math.random() * 200));
+
+    if (clear) {
+      await page.fill(selector, '');
+      await sleep(180);
     }
-    await sleep(250);
+
+    let wordCount = 0;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      let delay = 90 + Math.floor(Math.random() * 45); // Natural human base delay: 90ms - 135ms (~65-72 WPM)
+
+      if (char >= 'a' && char <= 'z') {
+        delay = 85 + Math.floor(Math.random() * 40);
+      } else if (char >= 'A' && char <= 'Z') {
+        delay = 140 + Math.floor(Math.random() * 50); // Shift key coordination
+      } else if (char === ' ') {
+        delay = 180 + Math.floor(Math.random() * 90); // Spacebar transition pause
+        wordCount++;
+        // Natural human mid-sentence thought pause every 4-5 words
+        if (wordCount % 5 === 0) {
+          await sleep(250 + Math.floor(Math.random() * 200));
+        }
+      } else if (char === '.' || char === ',' || char === '+' || char === '&' || char === ':' || char === '-') {
+        delay = 230 + Math.floor(Math.random() * 110); // Reaching for punctuation
+      }
+
+      await page.keyboard.type(char, { delay });
+    }
+
+    // Natural human inspection pause after typing finishes (reading what was written): 750ms - 1100ms
+    await sleep(750 + Math.floor(Math.random() * 350));
   } catch (e) {}
 }
 
@@ -317,6 +339,10 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
   await page.goto(`${baseUrl}/ats-checker`, { waitUntil: 'networkidle' });
   await sleep(1200);
 
+  // Candidate types their full name with authentic human cadence
+  await humanType(page, 'input[placeholder*="Your Full Name"]', 'Sithum Manusha');
+  await sleep(500);
+
   // Human clicks "⚡ 1-Click Load Full Data"
   await humanClickElement(page, 'button:has-text("1-Click Load Full Data")', 20);
   await sleep(1200);
@@ -485,7 +511,11 @@ async function humanSmoothScroll(page, targetY, durationSteps = 22) {
 
   // Human clicks "⚡ 1-Click Load Senior Answer"
   await humanClickElement(page, 'button:has-text("1-Click Load Senior Answer")', 18);
-  await sleep(1200);
+  await sleep(1000);
+
+  // Human clicks into response box and types an architectural conclusion with natural human cadence
+  await humanType(page, 'textarea[placeholder*="Type your response"]', ' In addition, Redis token-bucket rate limiting is configured to protect downstream services.', false);
+  await sleep(600);
 
   // Human moves to submit button and clicks "Evaluate Answer"
   await humanClickElement(page, 'button:has-text("Evaluate Answer")', 18);
