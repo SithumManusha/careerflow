@@ -4,7 +4,8 @@ A full-stack ATS resume optimization and technical interview preparation platfor
 
 > 🌐 **Live Web Application:** [https://careerflow-app.onrender.com](https://careerflow-app.onrender.com)  
 > 📖 **Interactive API Docs (Swagger):** [https://careerflow-backend-narz.onrender.com/swagger-ui/index.html](https://careerflow-backend-narz.onrender.com/swagger-ui/index.html)  
-> 💻 **Cloud IDE (GitHub Pro Codespaces):** [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/SithumManusha/careerflow)
+> 💻 **Cloud IDE (GitHub Pro Codespaces):** [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/SithumManusha/careerflow)  
+> 🛡️ **CI/CD Pipeline:** [![CareerFlow CI/CD Pipeline](https://github.com/SithumManusha/careerflow/actions/workflows/ci.yml/badge.svg)](https://github.com/SithumManusha/careerflow/actions)
 
 ---
 
