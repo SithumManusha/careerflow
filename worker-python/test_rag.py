@@ -1,6 +1,11 @@
 import pytest
 from app.rag_engine import analyze_resume_ats, extract_matched_keywords, compute_semantic_similarity
 from app.xyz_rewriter import rewrite_bullet_to_xyz
+from app.gemini_engine import is_gemini_active, rewrite_bullet_gemini, evaluate_interview_gemini
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
 
 SAMPLE_RESUME = """
 Jane Developer - Software Engineer Intern
@@ -65,3 +70,24 @@ def test_rewrite_bullet_to_xyz():
 def test_empty_edge_cases():
     res = analyze_resume_ats("", "")
     assert res.ats_score >= 0
+
+def test_gemini_resilient_fallback():
+    """Verify that when Gemini API key is absent, functions return None gracefully without raising exceptions."""
+    # When no key is set, functions return None to allow deterministic fallback
+    if not is_gemini_active():
+        assert rewrite_bullet_gemini("test bullet") is None
+        assert evaluate_interview_gemini("1", "question", "tech", "answer") is None
+
+def test_observability_metrics_endpoint():
+    """Verify production observability /api/metrics and /health endpoints."""
+    health_res = client.get("/health")
+    assert health_res.status_code == 200
+    assert health_res.json()["status"] == "UP"
+
+    metrics_res = client.get("/api/metrics")
+    assert metrics_res.status_code == 200
+    data = metrics_res.json()
+    assert data["status"] == "HEALTHY"
+    assert "uptime_seconds" in data
+    assert "ai_engine" in data
+    assert data["service"] == "careerflow-worker-python"
