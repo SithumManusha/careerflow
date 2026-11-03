@@ -1,0 +1,34 @@
+name: Render 24/7 Warmup & Keep-Alive
+
+on:
+  schedule:
+    # Runs every 10 minutes to prevent Render free tier from sleeping (inactivity window is 15 mins)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  keep-warm:
+    name: Ping Services to Prevent Cold Starts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping CareerFlow Microservices
+        run: |
+          echo "🔥 =========================================="
+          echo "🚀 Waking & Warming CareerFlow Microservices"
+          echo "⏰ Timestamp: $(date -u)"
+          echo "============================================"
+
+          SERVICES=(
+            "https://careerflow-app.onrender.com"
+            "https://careerflow-backend-narz.onrender.com/api/health"
+            "https://careerflow-v59v.onrender.com/health"
+          )
+
+          for URL in "${SERVICES[@]}"; do
+            echo "📡 Sending keep-alive request to: $URL"
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$URL" || echo "TIMEOUT")
+            echo "   ↳ Response Code: $HTTP_CODE"
+          done
+
+          echo "============================================"
+          echo "✅ All CareerFlow services successfully pinged and kept active 24/7!"

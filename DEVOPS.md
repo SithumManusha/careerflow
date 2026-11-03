@@ -109,3 +109,12 @@ CareerFlow exposes industry-standard health and monitoring metrics for infrastru
 1. **Immutable Versioning:** Every Docker image published to `ghcr.io` is tagged with both `:latest` and the unique commit SHA (`:${{ github.sha }}`).
 2. **Instant Rollback:** If a production regression occurs, the Render service can instantly revert to the prior SHA container tag in under 15 seconds without rebuilding.
 3. **Graceful Microservice Degradation:** If the Python NLP worker is temporarily unreachable during rolling updates, the Spring Boot core activates its local resilient fallback engine, maintaining 100% uptime for end-users.
+
+---
+
+## ⚡ 5. 24/7 Warmup & Cold-Start Elimination
+
+To eliminate cold-start spinning latency on free-tier cloud environments (where inactive instances sleep after 15 minutes), GitHub Actions executes a scheduled warmup cron job ([`.github/workflows/keep-alive.yml`](.github/workflows/keep-alive.yml)) every 10 minutes:
+- Pings Frontend (`https://careerflow-app.onrender.com`)
+- Pings Backend Health (`/api/health`) & Actuator (`/actuator/health`)
+- Guarantees instant sub-second response times for visitors, recruiters, and reviewers at zero operational cost.
