@@ -9,7 +9,7 @@ A production-grade, full-stack ATS resume optimization and technical interview p
 [![Tests](https://img.shields.io/badge/Tests-26%20Passed%20(JUnit%20%7C%20Pytest%20%7C%20Playwright)-brightgreen)](#-running-tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> 🌐 **Live Web Application:** [https://careerflow-app.onrender.com](https://careerflow-app.onrender.com)  
+> 🌐 **Live Web Application:** [https://careerflow-pink.vercel.app](https://careerflow-pink.vercel.app)  
 > 📖 **Interactive API Docs (Swagger):** [https://careerflow-backend-narz.onrender.com/swagger-ui/index.html](https://careerflow-backend-narz.onrender.com/swagger-ui/index.html)  
 > 💻 **Cloud IDE (GitHub Pro Codespaces):** [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/SithumManusha/careerflow)  
 > 📊 **System Observability & Metrics:** [`/api/metrics`](https://careerflow-backend-narz.onrender.com/api/metrics) & [`/actuator/health`](https://careerflow-backend-narz.onrender.com/actuator/health)

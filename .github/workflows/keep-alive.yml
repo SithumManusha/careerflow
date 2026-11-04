@@ -19,6 +19,7 @@ jobs:
           echo "============================================"
 
           SERVICES=(
+            "https://careerflow-pink.vercel.app"
             "https://careerflow-app.onrender.com"
             "https://careerflow-backend-narz.onrender.com/api/health"
             "https://careerflow-v59v.onrender.com/health"

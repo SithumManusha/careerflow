@@ -115,6 +115,6 @@ CareerFlow exposes industry-standard health and monitoring metrics for infrastru
 ## ⚡ 5. 24/7 Warmup & Cold-Start Elimination
 
 To eliminate cold-start spinning latency on free-tier cloud environments (where inactive instances sleep after 15 minutes), GitHub Actions executes a scheduled warmup cron job ([`.github/workflows/keep-alive.yml`](.github/workflows/keep-alive.yml)) every 10 minutes:
-- Pings Frontend (`https://careerflow-app.onrender.com`)
-- Pings Backend Health (`/api/health`) & Actuator (`/actuator/health`)
+- Pings Frontend (`https://careerflow-pink.vercel.app` on Vercel Edge)
+- Pings Backend Health (`/api/health`) & Actuator (`/actuator/health` on Render)
 - Guarantees instant sub-second response times for visitors, recruiters, and reviewers at zero operational cost.
