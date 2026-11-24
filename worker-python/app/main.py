@@ -48,7 +48,7 @@ def health_check():
         "status": "UP",
         "service": "CareerFlow Python RAG Worker",
         "version": "1.1.0",
-        "ai_mode": "Hybrid (Google Gemini 1.5 Flash + Fallback)" if is_gemini_active() else "Deterministic (Scikit-Learn TF-IDF)",
+        "ai_mode": "Hybrid (Google Gemini 4 Hydrogen + Fallback)" if is_gemini_active() else "Deterministic (Scikit-Learn TF-IDF)",
         "gemini_active": is_gemini_active()
     }
 
@@ -64,7 +64,7 @@ def get_metrics():
         "uptime_seconds": uptime,
         "service": "careerflow-worker-python",
         "runtime": "Python 3.12",
-        "ai_engine": "Google Gemini 1.5 Flash (Active)" if is_gemini_active() else "Scikit-Learn TF-IDF (Deterministic Fallback)",
+        "ai_engine": "Google Gemini 4 Hydrogen (Active)" if is_gemini_active() else "Scikit-Learn TF-IDF (Deterministic Fallback)",
         "telemetry": {
             "nlp_vector_dimensions": 1000,
             "supported_categories": 6,
@@ -99,7 +99,7 @@ def rewrite_bullet(request: XYZRewriteRequest):
     """
     Transforms weak resume bullet points into Google XYZ format:
     Accomplished [X] as measured by [Y], by doing [Z].
-    Uses Gemini 1.5 Flash if available, with automatic fallback to Scikit-Learn rule-engine.
+    Uses Gemini 4 Hydrogen if available, with automatic fallback to Scikit-Learn rule-engine.
     """
     if not request.bullet_point.strip():
         raise HTTPException(
@@ -197,7 +197,7 @@ def evaluate_answer(request: EvaluateInterviewAnswerRequest):
     - Missing key concepts
     - Senior Engineer Model Answer
     - Realistic Recruiter Follow-up Question
-    Uses Gemini 1.5 Flash if available, with automatic fallback to Scikit-Learn STAR rubric.
+    Uses Gemini 4 Hydrogen if available, with automatic fallback to Scikit-Learn STAR rubric.
     """
     if not request.user_answer.strip():
         raise HTTPException(status_code=400, detail="user_answer cannot be empty.")

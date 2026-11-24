@@ -6,13 +6,15 @@ from app.models import XYZRewriteResponse, EvaluateInterviewAnswerResponse
 
 logger = logging.getLogger("gemini_engine")
 
-# Check if google-generativeai is installed
+# Check if google-genai SDK is installed
 try:
-    import google.generativeai as genai
+    from google import genai
     GENAI_AVAILABLE = True
 except ImportError:
     GENAI_AVAILABLE = False
-    logger.warning("google-generativeai SDK not installed. Running in deterministic fallback mode.")
+    logger.warning("google-genai SDK not installed. Running in deterministic fallback mode.")
+
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-4-hydrogen")
 
 def get_gemini_api_key() -> Optional[str]:
     return os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
@@ -21,12 +23,10 @@ def is_gemini_active() -> bool:
     api_key = get_gemini_api_key()
     return bool(GENAI_AVAILABLE and api_key and api_key.strip() and not api_key.startswith("your_"))
 
-def get_gemini_model():
+def get_gemini_client():
     if not is_gemini_active():
         return None
-    api_key = get_gemini_api_key()
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel("gemini-1.5-flash")
+    return genai.Client(api_key=get_gemini_api_key())
 
 def rewrite_bullet_gemini(
     bullet_point: str,
@@ -35,7 +35,7 @@ def rewrite_bullet_gemini(
     metric_type: Optional[str] = "latency_or_efficiency"
 ) -> Optional[XYZRewriteResponse]:
     """
-    Transforms weak resume bullets using Gemini 1.5 Flash into Google XYZ format:
+    Transforms weak resume bullets using Gemini Interactions API (gemini-4-hydrogen) into Google XYZ format:
     Accomplished [X] as measured by [Y], by doing [Z].
     Returns None on API failure/missing key to trigger deterministic fallback.
     """
@@ -43,8 +43,8 @@ def rewrite_bullet_gemini(
         return None
 
     try:
-        model = get_gemini_model()
-        if not model:
+        client = get_gemini_client()
+        if not client:
             return None
 
         prompt = f"""
@@ -71,8 +71,8 @@ Respond ONLY with valid JSON strictly conforming to this schema (no extra markdo
   ]
 }}
 """
-        response = model.generate_content(prompt)
-        text = response.text.strip()
+        interaction = client.interactions.create(model=GEMINI_MODEL, input=prompt)
+        text = (interaction.output_text or "").strip()
         # Clean potential markdown wrapping ```json ... ```
         if text.startswith("```"):
             lines = text.split("\n")
@@ -104,15 +104,15 @@ def evaluate_interview_gemini(
     role_title: str = "Software Engineer"
 ) -> Optional[EvaluateInterviewAnswerResponse]:
     """
-    Evaluates mock interview answer using Gemini 1.5 Flash against Google STAR rubric.
+    Evaluates mock interview answer using Gemini Interactions API (gemini-4-hydrogen) against Google STAR rubric.
     Returns None on failure/missing key to trigger deterministic fallback.
     """
     if not is_gemini_active():
         return None
 
     try:
-        model = get_gemini_model()
-        if not model:
+        client = get_gemini_client()
+        if not client:
             return None
 
         prompt = f"""
@@ -141,8 +141,8 @@ Respond ONLY with valid JSON conforming to this schema (no extra markdown):
   "follow_up_question": "Tough technical follow-up question digging deeper into edge cases or failure modes."
 }}
 """
-        response = model.generate_content(prompt)
-        text = response.text.strip()
+        interaction = client.interactions.create(model=GEMINI_MODEL, input=prompt)
+        text = (interaction.output_text or "").strip()
         if text.startswith("```"):
             lines = text.split("\n")
             if lines[0].startswith("```"):

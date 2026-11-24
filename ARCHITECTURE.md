@@ -33,7 +33,7 @@ flowchart TD
 
     subgraph Intelligence_Tier["AI & NLP Worker Tier (Port 8000)"]
         FA["FastAPI Python 3.12 Microservice"]
-        GEMINI["Google Gemini 1.5 Flash<br/>(GenAI Contextual Rewriter & STAR Evaluator)"]
+        GEMINI["Google Gemini 4 Hydrogen<br/>(GenAI Contextual Rewriter & STAR Evaluator)"]
         TFIDF["Scikit-Learn NLP Engine<br/>(TF-IDF Vectorizer + Cosine Similarity)"]
         RUBRIC["Google XYZ & STAR Behavioral Rubrics"]
         
@@ -68,7 +68,7 @@ sequenceDiagram
     participant Gateway as Spring Boot 3 Gateway
     participant RateLimiter as Atomic Token-Bucket Limiter
     participant Worker as FastAPI NLP Worker
-    participant Gemini as Google Gemini 1.5 Flash
+    participant Gemini as Google Gemini 4 Hydrogen
     participant Fallback as Scikit-Learn TF-IDF Fallback
     participant DB as PostgreSQL Database
 
